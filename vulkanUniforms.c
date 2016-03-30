@@ -979,9 +979,9 @@ int main(int argc, char* argv[])
 
   //load shaders    
   size_t vertexShaderSize=0;
-  char *vertexShader = readBinaryFile("shaders/vert.spv", &vertexShaderSize);
+  char *vertexShader = readBinaryFile("shaders/uniforms/vert.spv", &vertexShaderSize);
   size_t fragmentShaderSize=0;
-  char *fragmentShader = readBinaryFile("shaders/frag.spv", &fragmentShaderSize);
+  char *fragmentShader = readBinaryFile("shaders/uniforms/frag.spv", &fragmentShaderSize);
   if (vertexShaderSize==0 || fragmentShaderSize==0){
     printf ("Colud not load shader file.\n");
     return -1;
@@ -1037,15 +1037,15 @@ int main(int argc, char* argv[])
     printf ("vkGetPhysicalDeviceProperties returned error %d.\n", res);
     return -1;
   }  
-  uint matrixOffset = sizeof(float)*16;
-  if (matrixOffset < deviceProperties.limits.minUniformBufferOffsetAlignment)
-	  matrixOffset = deviceProperties.limits.minUniformBufferOffsetAlignment;
+  uint uniformOffset = sizeof(float)*(16*2+3);
+  if (uniformOffset < deviceProperties.limits.minUniformBufferOffsetAlignment)
+	  uniformOffset = deviceProperties.limits.minUniformBufferOffsetAlignment;
 
   VkBufferCreateInfo uniformBufferCreateInfo;
   uniformBufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
   uniformBufferCreateInfo.pNext = NULL;
   uniformBufferCreateInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-  uniformBufferCreateInfo.size = matrixOffset*2;
+  uniformBufferCreateInfo.size = uniformOffset*2;
   uniformBufferCreateInfo.queueFamilyIndexCount = 0;
   uniformBufferCreateInfo.pQueueFamilyIndices = NULL;
   uniformBufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
@@ -1108,21 +1108,27 @@ int main(int argc, char* argv[])
   float viewMatrix[16];
   float modelMatrix[16]={1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};  
   float modelMatrix2[16]={1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};  
-  float MVMatrix[16];
-  float MVMatrix2[16];
-  //float *MVPMatrix1 = uniformMappedMemory;
-  //float *MVPMatrix2 = uniformMappedMemory+matrixOffset;
+  float tmpMVMatrix1[16];
+  float tmpMVMatrix2[16];
+  
+  float *MVMatrix1 = (float*)(void*)uniformMappedMemory;
+  float *MVMatrix2 = (float*)(((void*)uniformMappedMemory)+uniformOffset);
+  float *PMatrix1 = (float*)(((void*)uniformMappedMemory)+(16*sizeof(float)));
+  float *PMatrix2 = (float*)(((void*)uniformMappedMemory)+uniformOffset+(16*sizeof(float)));
   
   perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 0.1f, 100.0f, projectionMatrix);
+  memcpy(PMatrix1, projectionMatrix, sizeof(projectionMatrix));
+  memcpy(PMatrix2, projectionMatrix, sizeof(projectionMatrix));
   translate_matrix(0,0,-5, viewMatrix);
   rotate_matrix(45, 0,1,0, modelMatrix);
-  multiply_matrix(viewMatrix, modelMatrix, MVMatrix);
-  multiply_matrix(projectionMatrix, MVMatrix, (float*)uniformMappedMemory);
+  multiply_matrix(viewMatrix, modelMatrix, MVMatrix1);
+  //multiply_matrix(projectionMatrix, tmpMVMatrix1, MVMatrix1);
   
   rotate_matrix(0, 0,1,0, modelMatrix2);
   multiply_matrix(viewMatrix, modelMatrix2, MVMatrix2);
-  multiply_matrix(projectionMatrix, MVMatrix2, (float*)(((void*)uniformMappedMemory)+matrixOffset));
-  
+  //multiply_matrix(projectionMatrix, MVMatrix2, MVMatrix2);
+  //identity_matrix(PMatrix1);
+  //identity_matrix(PMatrix2);
   
   /*
   ("viewMatrix\n");
@@ -1145,10 +1151,10 @@ int main(int argc, char* argv[])
   VkDescriptorBufferInfo uniformBufferInfo[2];
   uniformBufferInfo[0].buffer = uniformBuffer;
   uniformBufferInfo[0].offset = 0;
-  uniformBufferInfo[0].range = sizeof(float)*16;  
+  uniformBufferInfo[0].range = sizeof(float)*(16*2+3);  
   uniformBufferInfo[1].buffer = uniformBuffer;
-  uniformBufferInfo[1].offset = matrixOffset;
-  uniformBufferInfo[1].range = sizeof(float)*16;  
+  uniformBufferInfo[1].offset = uniformOffset;
+  uniformBufferInfo[1].range = sizeof(float)*(16*2+3);  
   
   //Create a descriptor pool
   VkDescriptorPoolSize typeCounts[1];
@@ -1494,9 +1500,12 @@ int main(int argc, char* argv[])
             height = cfg->height;
             //The aspect ratio may have changed, build a now perspective matrix:
 	          perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 0.1f, 100.0f, projectionMatrix);
+      //Copy to GPU memory;
+	    memcpy(PMatrix1, projectionMatrix, sizeof(projectionMatrix));
+	    memcpy(PMatrix2, projectionMatrix, sizeof(projectionMatrix));
             //Update the mvp matrix for the stationary cube:
             //As the memory is still mapped we can write the result stright into uniformMappedMemory:
-            multiply_matrix(projectionMatrix, MVMatrix2, (float*)(((void*)uniformMappedMemory)+matrixOffset));
+            //multiply_matrix(projectionMatrix, MVMatrix2, (float*)(((void*)uniformMappedMemory)+uniformOffset));
 	        }
           break;
       }
@@ -1683,9 +1692,9 @@ int main(int argc, char* argv[])
 
     //The queue is idle, now is a good time to update the bound memory.
     rotate_matrix(45+frame, 0,1,0, modelMatrix);
-    multiply_matrix(viewMatrix, modelMatrix, MVMatrix);
     //As the memory is still mapped we can write the result stright into uniformMappedMemory:
-    multiply_matrix(projectionMatrix, MVMatrix, (float*)uniformMappedMemory);
+    multiply_matrix(viewMatrix, modelMatrix, MVMatrix1);
+    //multiply_matrix(projectionMatrix, tmpMVMatrix1, (float*)uniformMappedMemory);
     
     //printf ("Command buffer finished %d.\n", res);
     
