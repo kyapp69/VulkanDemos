@@ -1063,7 +1063,7 @@ int main(int argc, char* argv[])
   
   uint32_t typeBits = memoryRequirements.memoryTypeBits;  
   uint32_t typeIndex;
-  VkFlags requirements_mask = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;// | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+  VkFlags requirements_mask = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
   for (typeIndex = 0; typeIndex < physicalDeviceMemoryProperties.memoryTypeCount; typeIndex++) {
     if ((typeBits & 1) == 1)//Check last bit;
     {
