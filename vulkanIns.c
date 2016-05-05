@@ -23,7 +23,7 @@ struct Vertexa{
 
 #define XYZ1(_x_, _y_, _z_) (_x_), (_y_), (_z_), 1.f
 
-static const struct Vertexa g_vbDataCube[] = {
+static const struct Vertexa vetrexDataCube[] = {
     {XYZ1(-1, -1, -1), XYZ1(0.f, 0.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
     {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
     {XYZ1(-1, 1, -1), XYZ1(0.f, 1.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
@@ -67,34 +67,25 @@ static const struct Vertexa g_vbDataCube[] = {
     {XYZ1(-1, -1, -1), XYZ1(0.f, 0.f, 0.f), XYZ1(0.f, -1.f, 0.f)},
 };
 
-static const struct Vertexa g_vbDataPyramid[] = {
-    {XYZ1(-1, -1, -1), XYZ1(0.f, 0.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
-    {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
-    {XYZ1(0, 1, -1), XYZ1(0.f, 1.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
-    {XYZ1(0, 1, -1), XYZ1(0.f, 1.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
-    {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
-    {XYZ1(0, 1, -1), XYZ1(1.f, 1.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
+#define F1_3 1.0f/3.0f
+#define F2_3 2.0f/3.0f
 
-    {XYZ1(-1, -1, 1), XYZ1(0.f, 0.f, 1.f), XYZ1(0.f, 0.f, 1.f)},
-    {XYZ1(0, 1, 1), XYZ1(0.f, 1.f, 1.f), XYZ1(0.f, 0.f, 1.f)},
-    {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f), XYZ1(0.f, 0.f, 1.f)},
-    {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f), XYZ1(0.f, 0.f, 1.f)},
-    {XYZ1(0, 1, 1), XYZ1(0.f, 1.f, 1.f), XYZ1(0.f, 0.f, 1.f)},
-    {XYZ1(0, 1, 1), XYZ1(1.f, 1.f, 1.f), XYZ1(0.f, 0.f, 1.f)},
+static const struct Vertexa vetrexDataPyramid[] = {
+    {XYZ1(-1, -1, -1), XYZ1(0.f, 0.f, 0.f), XYZ1(0.f, F1_3, -F2_3)},
+    {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f), XYZ1(0.f, F1_3, -F2_3)},
+    {XYZ1(0, 1, 0), XYZ1(0.f, 1.f, 0.f), XYZ1(0.f, F1_3, -F2_3)},
 
-    {XYZ1(0, 1, 1), XYZ1(1.f, 1.f, 1.f), XYZ1(1.f, 0.f, 0.f)},
-    {XYZ1(0, 1, -1), XYZ1(1.f, 1.f, 0.f), XYZ1(1.f, 0.f, 0.f)},
-    {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f), XYZ1(1.f, 0.f, 0.f)},
-    {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f), XYZ1(1.f, 0.f, 0.f)},
-    {XYZ1(0, 1, -1), XYZ1(1.f, 1.f, 0.f), XYZ1(1.f, 0.f, 0.f)},
-    {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f), XYZ1(1.f, 0.f, 0.f)},
+    {XYZ1(-1, -1, 1), XYZ1(0.f, 0.f, 1.f), XYZ1(0.f, F1_3, F2_3)},
+    {XYZ1(0, 1, 0), XYZ1(0.f, 1.f, 1.f), XYZ1(0.f, F1_3, F2_3)},
+    {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f), XYZ1(0.f, F1_3, F2_3)},
 
-    {XYZ1(0, 1, 1), XYZ1(0.f, 1.f, 1.f), XYZ1(-1.f, 0.f, 0.f)},
-    {XYZ1(-1, -1, 1), XYZ1(0.f, 0.f, 1.f), XYZ1(-1.f, 0.f, 0.f)},
-    {XYZ1(0, 1, -1), XYZ1(0.f, 1.f, 0.f), XYZ1(-1.f, 0.f, 0.f)},
-    {XYZ1(0, 1, -1), XYZ1(0.f, 1.f, 0.f), XYZ1(-1.f, 0.f, 0.f)},
-    {XYZ1(-1, -1, 1), XYZ1(0.f, 0.f, 1.f), XYZ1(-1.f, 0.f, 0.f)},
-    {XYZ1(-1, -1, -1), XYZ1(0.f, 0.f, 0.f), XYZ1(-1.f, 0.f, 0.f)},
+    {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f), XYZ1(F2_3, F1_3, 0.f)},
+    {XYZ1(0, 1, 0), XYZ1(1.f, 1.f, 0.f), XYZ1(F2_3, F1_3, 0.f)},
+    {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f), XYZ1(F2_3, F1_3, 0.f)},
+
+    {XYZ1(0, 1, 0), XYZ1(0.f, 1.f, 0.f), XYZ1(-F2_3, F1_3, 0.f)},
+    {XYZ1(-1, -1, 1), XYZ1(0.f, 0.f, 1.f), XYZ1(-F2_3, F1_3, 0.f)},
+    {XYZ1(-1, -1, -1), XYZ1(0.f, 0.f, 0.f), XYZ1(-F2_3, F1_3, 0.f)},
 
     {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f), XYZ1(0.f, -1.f, 0.f)},
     {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f), XYZ1(0.f, -1.f, 0.f)},
@@ -1163,8 +1154,11 @@ int main(int argc, char* argv[])
    
      //Create the uniforms
   float viewMatrix[16];
-  float modelMatrix[16]={1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};  
-  float modelMatrix2[16]={1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
+  float translateLeftMatrix[16];
+  float translateRightMatrix[16];
+  float tmpMatrix[16];
+  translate_matrix(-1.5,0,0, translateLeftMatrix);
+  translate_matrix(1.5,0,0, translateRightMatrix);
   
   struct modelBufferVals *modelBufferVals1 = (struct modelBufferVals*)uniformMappedMemory;
   struct modelBufferVals *modelBufferVals2 = (struct modelBufferVals*)((void*)uniformMappedMemory + modelBufferValsOffset);
@@ -1172,17 +1166,17 @@ int main(int argc, char* argv[])
   
   sceneBufferValsp->lightDirection[0]=-1;
   sceneBufferValsp->lightDirection[1]=0;
-  sceneBufferValsp->lightDirection[2]=0;
+  sceneBufferValsp->lightDirection[2]=1;
 
   perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 0.1f, 100.0f, sceneBufferValsp->projection);
 
   translate_matrix(0,0,-5, sceneBufferValsp->view);
 
-  rotate_matrix(45, 0,1,0, modelBufferVals1->model);
-//  multiply_matrix(viewMatrix, modelMatrix, modelBufferVals1->mv);
+  rotate_matrix(45, 0,1,0, tmpMatrix);
+  multiply_matrix(translateLeftMatrix, tmpMatrix, modelBufferVals1->model);
 
-  rotate_matrix(0, 0,1,0, modelBufferVals2->model);
-//  multiply_matrix(viewMatrix, modelMatrix2, modelBufferVals2->mv);
+  rotate_matrix(0, 0,1,0, tmpMatrix);
+  multiply_matrix(translateRightMatrix, tmpMatrix, modelBufferVals2->model);
   
   /*
   ("viewMatrix\n");
@@ -1247,7 +1241,7 @@ int main(int argc, char* argv[])
   vertexBufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
   vertexBufferCreateInfo.pNext = NULL;
   vertexBufferCreateInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-  vertexBufferCreateInfo.size = sizeof(g_vbDataCube)+sizeof(g_vbDataPyramid);
+  vertexBufferCreateInfo.size = sizeof(vetrexDataCube)+sizeof(vetrexDataPyramid);
   vertexBufferCreateInfo.queueFamilyIndexCount = 0;
   vertexBufferCreateInfo.pQueueFamilyIndices = NULL;
   vertexBufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
@@ -1300,19 +1294,19 @@ int main(int argc, char* argv[])
     return -1;
   }
   
-  memcpy(vertexMappedMemory, g_vbDataCube, sizeof(g_vbDataCube));
-  memcpy(vertexMappedMemory+sizeof(g_vbDataCube), g_vbDataPyramid, sizeof(g_vbDataPyramid));
+  memcpy(vertexMappedMemory, vetrexDataCube, sizeof(vetrexDataCube));
+  memcpy(vertexMappedMemory+sizeof(vetrexDataCube), vetrexDataPyramid, sizeof(vetrexDataPyramid));
 
   vkUnmapMemory(device, vertexMemory);
 
   VkDescriptorBufferInfo vertexBufferInfoCube;
   vertexBufferInfoCube.buffer = vertexBuffer;
   vertexBufferInfoCube.offset = 0;
-  vertexBufferInfoCube.range = sizeof(g_vbDataCube);
+  vertexBufferInfoCube.range = sizeof(vetrexDataCube);
   VkDescriptorBufferInfo vertexBufferInfoPyramid;
   vertexBufferInfoPyramid.buffer = vertexBuffer;
-  vertexBufferInfoPyramid.offset = sizeof(g_vbDataCube);
-  vertexBufferInfoPyramid.range = sizeof(g_vbDataPyramid);
+  vertexBufferInfoPyramid.offset = sizeof(vetrexDataCube);
+  vertexBufferInfoPyramid.range = sizeof(vetrexDataPyramid);
 
   res = vkBindBufferMemory(device, vertexBuffer, vertexMemory, 0);
   if (res != VK_SUCCESS) {
@@ -1694,14 +1688,14 @@ int main(int argc, char* argv[])
     vkCmdBindDescriptorSets(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS,
                   pipelineLayout, 0, 1,
                   descriptorSets, 0, NULL);
-    vkCmdDraw(commandBuffers[1], 12 * 3, 1, 0, 0);
+    vkCmdDraw(commandBuffers[1], 6 * 6, 1, 0, 0);
 
-    offsets[0] = sizeof(g_vbDataCube);
+    offsets[0] = sizeof(vetrexDataCube);
     vkCmdBindVertexBuffers(commandBuffers[1], 0, 1, &vertexBuffer, offsets);
     vkCmdBindDescriptorSets(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS,
                   pipelineLayout, 0, 1,
                   &descriptorSets[1], 0, NULL);
-    vkCmdDraw(commandBuffers[1], 12 * 3, 1, 0, 0);
+    vkCmdDraw(commandBuffers[1], 3 * 6, 1, 0, 0);
     
     vkCmdEndRenderPass(commandBuffers[1]);
     
@@ -1776,9 +1770,9 @@ int main(int argc, char* argv[])
     */
 
     //The queue is idle, now is a good time to update the bound memory.
-    rotate_matrix(45+frame, 0,1,0, modelBufferVals1->model);
-    //As the memory is still mapped we can write the result stright into uniformMappedMemory:
-//    multiply_matrix(viewMatrix, modelMatrix, modelBufferVals1->mv);
+    rotate_matrix(45+frame, 0,1,0, tmpMatrix);
+    multiply_matrix(translateLeftMatrix, tmpMatrix, modelBufferVals1->model);
+    multiply_matrix(translateRightMatrix, tmpMatrix, modelBufferVals2->model);
     
     //printf ("Command buffer finished %d.\n", res);
     
