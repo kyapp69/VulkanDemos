@@ -23,7 +23,7 @@ struct Vertexa{
 
 #define XYZ1(_x_, _y_, _z_) (_x_), (_y_), (_z_), 1.f
 
-static const struct Vertexa g_vbData[] = {
+static const struct Vertexa g_vbDataCube[] = {
     {XYZ1(-1, -1, -1), XYZ1(0.f, 0.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
     {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
     {XYZ1(-1, 1, -1), XYZ1(0.f, 1.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
@@ -58,6 +58,43 @@ static const struct Vertexa g_vbData[] = {
     {XYZ1(1, 1, -1), XYZ1(1.f, 1.f, 0.f), XYZ1(0.f, 1.f, 0.f)},
     {XYZ1(-1, 1, 1), XYZ1(0.f, 1.f, 1.f), XYZ1(0.f, 1.f, 0.f)},
     {XYZ1(-1, 1, -1), XYZ1(0.f, 1.f, 0.f), XYZ1(0.f, 1.f, 0.f)},
+
+    {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f), XYZ1(0.f, -1.f, 0.f)},
+    {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f), XYZ1(0.f, -1.f, 0.f)},
+    {XYZ1(-1, -1, 1), XYZ1(0.f, 0.f, 1.f), XYZ1(0.f, -1.f, 0.f)},
+    {XYZ1(-1, -1, 1), XYZ1(0.f, 0.f, 1.f), XYZ1(0.f, -1.f, 0.f)},
+    {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f), XYZ1(0.f, -1.f, 0.f)},
+    {XYZ1(-1, -1, -1), XYZ1(0.f, 0.f, 0.f), XYZ1(0.f, -1.f, 0.f)},
+};
+
+static const struct Vertexa g_vbDataPyramid[] = {
+    {XYZ1(-1, -1, -1), XYZ1(0.f, 0.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
+    {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
+    {XYZ1(0, 1, -1), XYZ1(0.f, 1.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
+    {XYZ1(0, 1, -1), XYZ1(0.f, 1.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
+    {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
+    {XYZ1(0, 1, -1), XYZ1(1.f, 1.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
+
+    {XYZ1(-1, -1, 1), XYZ1(0.f, 0.f, 1.f), XYZ1(0.f, 0.f, 1.f)},
+    {XYZ1(0, 1, 1), XYZ1(0.f, 1.f, 1.f), XYZ1(0.f, 0.f, 1.f)},
+    {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f), XYZ1(0.f, 0.f, 1.f)},
+    {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f), XYZ1(0.f, 0.f, 1.f)},
+    {XYZ1(0, 1, 1), XYZ1(0.f, 1.f, 1.f), XYZ1(0.f, 0.f, 1.f)},
+    {XYZ1(0, 1, 1), XYZ1(1.f, 1.f, 1.f), XYZ1(0.f, 0.f, 1.f)},
+
+    {XYZ1(0, 1, 1), XYZ1(1.f, 1.f, 1.f), XYZ1(1.f, 0.f, 0.f)},
+    {XYZ1(0, 1, -1), XYZ1(1.f, 1.f, 0.f), XYZ1(1.f, 0.f, 0.f)},
+    {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f), XYZ1(1.f, 0.f, 0.f)},
+    {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f), XYZ1(1.f, 0.f, 0.f)},
+    {XYZ1(0, 1, -1), XYZ1(1.f, 1.f, 0.f), XYZ1(1.f, 0.f, 0.f)},
+    {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f), XYZ1(1.f, 0.f, 0.f)},
+
+    {XYZ1(0, 1, 1), XYZ1(0.f, 1.f, 1.f), XYZ1(-1.f, 0.f, 0.f)},
+    {XYZ1(-1, -1, 1), XYZ1(0.f, 0.f, 1.f), XYZ1(-1.f, 0.f, 0.f)},
+    {XYZ1(0, 1, -1), XYZ1(0.f, 1.f, 0.f), XYZ1(-1.f, 0.f, 0.f)},
+    {XYZ1(0, 1, -1), XYZ1(0.f, 1.f, 0.f), XYZ1(-1.f, 0.f, 0.f)},
+    {XYZ1(-1, -1, 1), XYZ1(0.f, 0.f, 1.f), XYZ1(-1.f, 0.f, 0.f)},
+    {XYZ1(-1, -1, -1), XYZ1(0.f, 0.f, 0.f), XYZ1(-1.f, 0.f, 0.f)},
 
     {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f), XYZ1(0.f, -1.f, 0.f)},
     {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f), XYZ1(0.f, -1.f, 0.f)},
@@ -1052,10 +1089,8 @@ int main(int argc, char* argv[])
   if (res != VK_SUCCESS) {
     printf ("vkGetPhysicalDeviceProperties returned error %d.\n", res);
     return -1;
-  }  
-  printf ("minUniformBufferOffsetAlignment %d.\n",deviceProperties.limits.minUniformBufferOffsetAlignment);
-  printf ("sizeof(struct modelBufferVals) %d.\n", sizeof(struct modelBufferVals));
-  printf ("sizeof(struct sceneBufferVals) %d.\n", sizeof(struct sceneBufferVals));
+  }
+
   uint modelBufferValsOffset = sizeof(struct modelBufferVals);
   uint sceneBufferValsOffset = sizeof(struct sceneBufferVals);
   if (modelBufferValsOffset < deviceProperties.limits.minUniformBufferOffsetAlignment)
@@ -1196,7 +1231,7 @@ int main(int argc, char* argv[])
   VkDescriptorPoolCreateInfo descriptorPoolInfo;
   descriptorPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
   descriptorPoolInfo.pNext = NULL;
-  descriptorPoolInfo.maxSets = 3;
+  descriptorPoolInfo.maxSets = 2;
   descriptorPoolInfo.poolSizeCount = 1;
   descriptorPoolInfo.pPoolSizes = typeCounts;
 
@@ -1212,7 +1247,7 @@ int main(int argc, char* argv[])
   vertexBufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
   vertexBufferCreateInfo.pNext = NULL;
   vertexBufferCreateInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-  vertexBufferCreateInfo.size = sizeof(g_vbData);
+  vertexBufferCreateInfo.size = sizeof(g_vbDataCube)+sizeof(g_vbDataPyramid);
   vertexBufferCreateInfo.queueFamilyIndexCount = 0;
   vertexBufferCreateInfo.pQueueFamilyIndices = NULL;
   vertexBufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
@@ -1265,14 +1300,19 @@ int main(int argc, char* argv[])
     return -1;
   }
   
-  memcpy(vertexMappedMemory, g_vbData, sizeof(g_vbData));
+  memcpy(vertexMappedMemory, g_vbDataCube, sizeof(g_vbDataCube));
+  memcpy(vertexMappedMemory+sizeof(g_vbDataCube), g_vbDataPyramid, sizeof(g_vbDataPyramid));
 
   vkUnmapMemory(device, vertexMemory);
 
-  VkDescriptorBufferInfo vertexBufferInfo;
-  vertexBufferInfo.buffer = vertexBuffer;
-  vertexBufferInfo.offset = 0;
-  vertexBufferInfo.range = memoryRequirements.size;
+  VkDescriptorBufferInfo vertexBufferInfoCube;
+  vertexBufferInfoCube.buffer = vertexBuffer;
+  vertexBufferInfoCube.offset = 0;
+  vertexBufferInfoCube.range = sizeof(g_vbDataCube);
+  VkDescriptorBufferInfo vertexBufferInfoPyramid;
+  vertexBufferInfoPyramid.buffer = vertexBuffer;
+  vertexBufferInfoPyramid.offset = sizeof(g_vbDataCube);
+  vertexBufferInfoPyramid.range = sizeof(g_vbDataPyramid);
 
   res = vkBindBufferMemory(device, vertexBuffer, vertexMemory, 0);
   if (res != VK_SUCCESS) {
@@ -1282,7 +1322,7 @@ int main(int argc, char* argv[])
   VkVertexInputBindingDescription vertexInputBindingDescription;
   vertexInputBindingDescription.binding = 0;
   vertexInputBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-  vertexInputBindingDescription.stride = sizeof(g_vbData[0]);
+  vertexInputBindingDescription.stride = sizeof(struct Vertexa);
 
   VkVertexInputAttributeDescription vertexInputAttributeDescription[3];
   for (int i = 0; i < 3; i++)
@@ -1648,12 +1688,16 @@ int main(int argc, char* argv[])
     vkCmdSetViewport(commandBuffers[1], 0, 1, &viewport);
     vkCmdSetScissor(commandBuffers[1], 0, 1, &scissor);
     
-    VkDeviceSize offsets[1] = {0};
+    VkDeviceSize offsets[1];
+    offsets[0] = 0;
     vkCmdBindVertexBuffers(commandBuffers[1], 0, 1, &vertexBuffer, offsets);
     vkCmdBindDescriptorSets(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS,
                   pipelineLayout, 0, 1,
                   descriptorSets, 0, NULL);
     vkCmdDraw(commandBuffers[1], 12 * 3, 1, 0, 0);
+
+    offsets[0] = sizeof(g_vbDataCube);
+    vkCmdBindVertexBuffers(commandBuffers[1], 0, 1, &vertexBuffer, offsets);
     vkCmdBindDescriptorSets(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS,
                   pipelineLayout, 0, 1,
                   &descriptorSets[1], 0, NULL);
