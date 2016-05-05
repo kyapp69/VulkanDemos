@@ -584,6 +584,15 @@ int resizeBuffers(VkCommandBuffer setupBuffer, VkQueue queue, VkPhysicalDevice *
   }    
 }
 
+struct modelBufferVals {
+    float mv[16];
+};
+
+struct sceneBufferVals {
+    float lightDirection[4];
+    float projection[16];
+};
+
 int main(int argc, char* argv[])
 {
 //void* vulkan_so=dlopen("libvulkan.so", RTLD_NOW|RTLD_LOCAL);
@@ -939,18 +948,23 @@ int main(int argc, char* argv[])
   }    
   
   //Setup the pipeline
-  VkDescriptorSetLayoutBinding layout_bindings[1];
+  VkDescriptorSetLayoutBinding layout_bindings[2];
   layout_bindings[0].binding = 0;
   layout_bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
   layout_bindings[0].descriptorCount = 1;
   layout_bindings[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
   layout_bindings[0].pImmutableSamplers = NULL;
+  layout_bindings[1].binding = 1;
+  layout_bindings[1].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  layout_bindings[1].descriptorCount = 1;
+  layout_bindings[1].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+  layout_bindings[1].pImmutableSamplers = NULL;
   
   //Next take layout bindings and use them to create a descriptor set layout
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo;
   descriptorSetLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
   descriptorSetLayoutCreateInfo.pNext = NULL;
-  descriptorSetLayoutCreateInfo.bindingCount = 1;
+  descriptorSetLayoutCreateInfo.bindingCount = 2;
   descriptorSetLayoutCreateInfo.pBindings = layout_bindings;
     
   VkDescriptorSetLayout descriptorSetLayout;
@@ -1037,15 +1051,22 @@ int main(int argc, char* argv[])
     printf ("vkGetPhysicalDeviceProperties returned error %d.\n", res);
     return -1;
   }  
-  uint uniformOffset = sizeof(float)*(16*2+3);
-  if (uniformOffset < deviceProperties.limits.minUniformBufferOffsetAlignment)
-	  uniformOffset = deviceProperties.limits.minUniformBufferOffsetAlignment;
+  printf ("minUniformBufferOffsetAlignment %d.\n",deviceProperties.limits.minUniformBufferOffsetAlignment);
+  printf ("sizeof(struct modelBufferVals) %d.\n", sizeof(struct modelBufferVals));
+  printf ("sizeof(struct sceneBufferVals) %d.\n", sizeof(struct sceneBufferVals));
+  uint modelBufferValsOffset = sizeof(struct modelBufferVals);
+  uint sceneBufferValsOffset = sizeof(struct sceneBufferVals);
+  if (modelBufferValsOffset < deviceProperties.limits.minUniformBufferOffsetAlignment)
+	  modelBufferValsOffset = deviceProperties.limits.minUniformBufferOffsetAlignment;
+  if (sceneBufferValsOffset < deviceProperties.limits.minUniformBufferOffsetAlignment)
+	  sceneBufferValsOffset = deviceProperties.limits.minUniformBufferOffsetAlignment;
+  printf ("VkBufferCreateInfo size: %d.\n", modelBufferValsOffset*2+sceneBufferValsOffset);
 
   VkBufferCreateInfo uniformBufferCreateInfo;
   uniformBufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
   uniformBufferCreateInfo.pNext = NULL;
   uniformBufferCreateInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-  uniformBufferCreateInfo.size = uniformOffset*2;
+  uniformBufferCreateInfo.size = modelBufferValsOffset*2+sceneBufferValsOffset;
   uniformBufferCreateInfo.queueFamilyIndexCount = 0;
   uniformBufferCreateInfo.pQueueFamilyIndices = NULL;
   uniformBufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
@@ -1111,24 +1132,33 @@ int main(int argc, char* argv[])
   float tmpMVMatrix1[16];
   float tmpMVMatrix2[16];
   
-  float *MVMatrix1 = (float*)(void*)uniformMappedMemory;
-  float *MVMatrix2 = (float*)(((void*)uniformMappedMemory)+uniformOffset);
-  float *PMatrix1 = (float*)(((void*)uniformMappedMemory)+(16*sizeof(float)));
-  float *PMatrix2 = (float*)(((void*)uniformMappedMemory)+uniformOffset+(16*sizeof(float)));
+  //float *MVMatrix1 = (float*)(void*)uniformMappedMemory;
+  //float *MVMatrix2 = (float*)(((void*)uniformMappedMemory)+uniformOffset);
+  //float *PMatrix1 = (float*)(((void*)uniformMappedMemory)+(16*sizeof(float)));
+  //float *PMatrix2 = (float*)(((void*)uniformMappedMemory)+uniformOffset+(16*sizeof(float)));
   
-  perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 0.1f, 100.0f, projectionMatrix);
-  memcpy(PMatrix1, projectionMatrix, sizeof(projectionMatrix));
-  memcpy(PMatrix2, projectionMatrix, sizeof(projectionMatrix));
+  struct modelBufferVals *modelBufferVals1 = (struct modelBufferVals*)uniformMappedMemory;
+  struct modelBufferVals *modelBufferVals2 = (struct modelBufferVals*)((void*)uniformMappedMemory + modelBufferValsOffset);
+  struct sceneBufferVals *sceneBufferValsp = (struct sceneBufferVals*)((void*)uniformMappedMemory + (modelBufferValsOffset*2));
+  
+  perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 0.1f, 100.0f, sceneBufferValsp->projection);
+
+  //memcpy(PMatrix1, projectionMatrix, sizeof(projectionMatrix));
+  //memcpy(PMatrix2, projectionMatrix, sizeof(projectionMatrix));
   translate_matrix(0,0,-5, viewMatrix);
   rotate_matrix(45, 0,1,0, modelMatrix);
-  multiply_matrix(viewMatrix, modelMatrix, MVMatrix1);
-  //multiply_matrix(projectionMatrix, tmpMVMatrix1, MVMatrix1);
-  
+  multiply_matrix(viewMatrix, modelMatrix, modelBufferVals1->mv);
+//  multiply_matrix(projectionMatrix, tmpMVMatrix1, modelBufferVals1);
+
   rotate_matrix(0, 0,1,0, modelMatrix2);
-  multiply_matrix(viewMatrix, modelMatrix2, MVMatrix2);
+//  multiply_matrix(viewMatrix, modelMatrix2, uniformMappedMemory+256);
   //multiply_matrix(projectionMatrix, MVMatrix2, MVMatrix2);
+  multiply_matrix(viewMatrix, modelMatrix2, modelBufferVals2->mv);
+//  multiply_matrix(projectionMatrix, tmpMVMatrix2, modelBufferVals2);
   //identity_matrix(PMatrix1);
   //identity_matrix(PMatrix2);
+
+//  multiply_matrix(projectionMatrix, tmpMVMatrix1, sceneBufferValsp);
   
   /*
   ("viewMatrix\n");
@@ -1138,7 +1168,11 @@ int main(int argc, char* argv[])
   printf("MVPMatrix\n");
   print_matrix(MVPMatrix);
   */
-
+//  VkMappedMemoryRange flushrange;
+//  flushrange.memory=uniformMemory;
+//  flushrange.offset=0;
+//  flushrange.size=memoryRequirements.size;
+//  vkFlushMappedMemoryRanges(device, 1, &flushrange);
 
 //   //vkUnmapMemory(device, uniformMemory);
 
@@ -1148,18 +1182,27 @@ int main(int argc, char* argv[])
     return -1;
   }
   
-  VkDescriptorBufferInfo uniformBufferInfo[2];
+  VkDescriptorBufferInfo uniformBufferInfo[4];
   uniformBufferInfo[0].buffer = uniformBuffer;
   uniformBufferInfo[0].offset = 0;
-  uniformBufferInfo[0].range = sizeof(float)*(16*2+3);  
+  uniformBufferInfo[0].range = sizeof(struct modelBufferVals);
+  
   uniformBufferInfo[1].buffer = uniformBuffer;
-  uniformBufferInfo[1].offset = uniformOffset;
-  uniformBufferInfo[1].range = sizeof(float)*(16*2+3);  
+  uniformBufferInfo[1].offset = 512;
+  uniformBufferInfo[1].range = sizeof(struct sceneBufferVals);
+  
+  uniformBufferInfo[2].buffer = uniformBuffer;
+  uniformBufferInfo[2].offset = modelBufferValsOffset;
+  uniformBufferInfo[2].range = sizeof(struct modelBufferVals);
+  
+  uniformBufferInfo[3].buffer = uniformBuffer;
+  uniformBufferInfo[3].offset = 512;
+  uniformBufferInfo[3].range = sizeof(struct sceneBufferVals);
   
   //Create a descriptor pool
   VkDescriptorPoolSize typeCounts[1];
   typeCounts[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  typeCounts[0].descriptorCount = 2;
+  typeCounts[0].descriptorCount = 4;
 
   VkDescriptorPoolCreateInfo descriptorPoolInfo;
   descriptorPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -1278,7 +1321,7 @@ int main(int argc, char* argv[])
     return -1;
   }
   //return 0;
-  VkWriteDescriptorSet writes[2];
+  VkWriteDescriptorSet writes[4];
   writes[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
   writes[0].pNext = NULL;
   writes[0].dstSet = descriptorSets[0];
@@ -1289,14 +1332,30 @@ int main(int argc, char* argv[])
   writes[0].dstBinding = 0;
   writes[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
   writes[1].pNext = NULL;
-  writes[1].dstSet = descriptorSets[1];
+  writes[1].dstSet = descriptorSets[0];
   writes[1].descriptorCount = 1;
   writes[1].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
   writes[1].pBufferInfo = &uniformBufferInfo[1];
   writes[1].dstArrayElement = 0;
-  writes[1].dstBinding = 0;
+  writes[1].dstBinding = 1;
+  writes[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+  writes[2].pNext = NULL;
+  writes[2].dstSet = descriptorSets[1];
+  writes[2].descriptorCount = 1;
+  writes[2].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  writes[2].pBufferInfo = &uniformBufferInfo[2];
+  writes[2].dstArrayElement = 0;
+  writes[2].dstBinding = 0;
+  writes[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+  writes[3].pNext = NULL;
+  writes[3].dstSet = descriptorSets[1];
+  writes[3].descriptorCount = 1;
+  writes[3].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  writes[3].pBufferInfo = &uniformBufferInfo[3];
+  writes[3].dstArrayElement = 0;
+  writes[3].dstBinding = 1;
 
-  vkUpdateDescriptorSets(device, 2, writes, 0, NULL); 
+  vkUpdateDescriptorSets(device, 4, writes, 0, NULL);
     /*
   //Create a pipeline cache
   VkPipelineCache pipelineCache;
@@ -1499,10 +1558,10 @@ int main(int argc, char* argv[])
             width = cfg->width;
             height = cfg->height;
             //The aspect ratio may have changed, build a now perspective matrix:
-	          perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 0.1f, 100.0f, projectionMatrix);
+//              perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 0.1f, 100.0f, sceneBufferValsp->projection);
       //Copy to GPU memory;
-	    memcpy(PMatrix1, projectionMatrix, sizeof(projectionMatrix));
-	    memcpy(PMatrix2, projectionMatrix, sizeof(projectionMatrix));
+	    //memcpy(PMatrix1, projectionMatrix, sizeof(projectionMatrix));
+	    //memcpy(PMatrix2, projectionMatrix, sizeof(projectionMatrix));
             //Update the mvp matrix for the stationary cube:
             //As the memory is still mapped we can write the result stright into uniformMappedMemory:
             //multiply_matrix(projectionMatrix, MVMatrix2, (float*)(((void*)uniformMappedMemory)+uniformOffset));
@@ -1610,12 +1669,12 @@ int main(int argc, char* argv[])
     VkDeviceSize offsets[1] = {0};
     vkCmdBindVertexBuffers(commandBuffers[1], 0, 1, &vertexBuffer, offsets);
     vkCmdBindDescriptorSets(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS,
-			      pipelineLayout, 0, 1,
-			      descriptorSets, 0, NULL);
-    vkCmdDraw(commandBuffers[1], 12 * 3, 1, 0, 0);    
+                  pipelineLayout, 0, 1,
+                  descriptorSets, 0, NULL);
+    vkCmdDraw(commandBuffers[1], 12 * 3, 1, 0, 0);
     vkCmdBindDescriptorSets(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS,
-			      pipelineLayout, 0, 1,
-			      &descriptorSets[1], 0, NULL);
+                  pipelineLayout, 0, 1,
+                  &descriptorSets[1], 0, NULL);
     vkCmdDraw(commandBuffers[1], 12 * 3, 1, 0, 0);
     
     vkCmdEndRenderPass(commandBuffers[1]);
@@ -1693,7 +1752,9 @@ int main(int argc, char* argv[])
     //The queue is idle, now is a good time to update the bound memory.
     rotate_matrix(45+frame, 0,1,0, modelMatrix);
     //As the memory is still mapped we can write the result stright into uniformMappedMemory:
-    multiply_matrix(viewMatrix, modelMatrix, MVMatrix1);
+    multiply_matrix(viewMatrix, modelMatrix, modelBufferVals1->mv);
+//    multiply_matrix(viewMatrix, modelMatrix, tmpMVMatrix2);
+//    multiply_matrix(projectionMatrix, tmpMVMatrix2, modelBufferVals2);
     //multiply_matrix(projectionMatrix, tmpMVMatrix1, (float*)uniformMappedMemory);
     
     //printf ("Command buffer finished %d.\n", res);

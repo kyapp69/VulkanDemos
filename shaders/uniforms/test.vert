@@ -2,11 +2,14 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_ARB_shading_language_420pack : enable
 
-layout (std140, binding = 0) uniform bufferVals {
+layout (set = 0, binding = 0) uniform bufferVals {
     mat4 mv;
-    mat4 p;
-    vec3 lightpos;
 } myBufferVals;
+
+layout (std140, set = 0, binding = 1) uniform bufferVals1 {
+    vec3 lightDirection;
+    mat4 p;
+} myBufferVals1;
 
 layout (location = 0) in vec4 pos;
 layout (location = 1) in vec4 inColor;
@@ -18,8 +21,8 @@ out gl_PerVertex {
 
 void main() {
    outColor = inColor;
-   mat4 mvp = myBufferVals.p * myBufferVals.mv;
-   gl_Position =  mvp * pos;
+   mat4 mvp = myBufferVals1.p * myBufferVals.mv;
+   gl_Position = mvp * pos;
 
    // GL->VK conventions
    gl_Position.y = -gl_Position.y;
