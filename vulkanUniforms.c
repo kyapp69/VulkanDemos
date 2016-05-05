@@ -1125,17 +1125,9 @@ int main(int argc, char* argv[])
   }
    
      //Create the uniforms
-  float projectionMatrix[16];
   float viewMatrix[16];
   float modelMatrix[16]={1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};  
-  float modelMatrix2[16]={1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};  
-  float tmpMVMatrix1[16];
-  float tmpMVMatrix2[16];
-  
-  //float *MVMatrix1 = (float*)(void*)uniformMappedMemory;
-  //float *MVMatrix2 = (float*)(((void*)uniformMappedMemory)+uniformOffset);
-  //float *PMatrix1 = (float*)(((void*)uniformMappedMemory)+(16*sizeof(float)));
-  //float *PMatrix2 = (float*)(((void*)uniformMappedMemory)+uniformOffset+(16*sizeof(float)));
+  float modelMatrix2[16]={1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
   
   struct modelBufferVals *modelBufferVals1 = (struct modelBufferVals*)uniformMappedMemory;
   struct modelBufferVals *modelBufferVals2 = (struct modelBufferVals*)((void*)uniformMappedMemory + modelBufferValsOffset);
@@ -1143,22 +1135,12 @@ int main(int argc, char* argv[])
   
   perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 0.1f, 100.0f, sceneBufferValsp->projection);
 
-  //memcpy(PMatrix1, projectionMatrix, sizeof(projectionMatrix));
-  //memcpy(PMatrix2, projectionMatrix, sizeof(projectionMatrix));
   translate_matrix(0,0,-5, viewMatrix);
   rotate_matrix(45, 0,1,0, modelMatrix);
   multiply_matrix(viewMatrix, modelMatrix, modelBufferVals1->mv);
-//  multiply_matrix(projectionMatrix, tmpMVMatrix1, modelBufferVals1);
 
   rotate_matrix(0, 0,1,0, modelMatrix2);
-//  multiply_matrix(viewMatrix, modelMatrix2, uniformMappedMemory+256);
-  //multiply_matrix(projectionMatrix, MVMatrix2, MVMatrix2);
   multiply_matrix(viewMatrix, modelMatrix2, modelBufferVals2->mv);
-//  multiply_matrix(projectionMatrix, tmpMVMatrix2, modelBufferVals2);
-  //identity_matrix(PMatrix1);
-  //identity_matrix(PMatrix2);
-
-//  multiply_matrix(projectionMatrix, tmpMVMatrix1, sceneBufferValsp);
   
   /*
   ("viewMatrix\n");
@@ -1552,20 +1534,14 @@ int main(int argc, char* argv[])
                  break;	   
 	      case XCB_CONFIGURE_NOTIFY:;
 	        const xcb_configure_notify_event_t *cfg = (const xcb_configure_notify_event_t *)e;
-	        if ((width != cfg->width) || (height != cfg->height)) {
-            //The window has been re-sized
-            newSwapchainRequired=1;
-            width = cfg->width;
-            height = cfg->height;
-            //The aspect ratio may have changed, build a now perspective matrix:
-//              perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 0.1f, 100.0f, sceneBufferValsp->projection);
-      //Copy to GPU memory;
-	    //memcpy(PMatrix1, projectionMatrix, sizeof(projectionMatrix));
-	    //memcpy(PMatrix2, projectionMatrix, sizeof(projectionMatrix));
-            //Update the mvp matrix for the stationary cube:
-            //As the memory is still mapped we can write the result stright into uniformMappedMemory:
-            //multiply_matrix(projectionMatrix, MVMatrix2, (float*)(((void*)uniformMappedMemory)+uniformOffset));
-	        }
+            if ((width != cfg->width) || (height != cfg->height)) {
+                //The window has been re-sized
+                newSwapchainRequired=1;
+                width = cfg->width;
+                height = cfg->height;
+                //The aspect ratio may have changed, build a new perspective matrix and write to bound memory:
+                perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 0.1f, 100.0f, sceneBufferValsp->projection);
+            }
           break;
       }
       if ((e->response_type & ~0x80)==XCB_CLIENT_MESSAGE)
@@ -1753,9 +1729,6 @@ int main(int argc, char* argv[])
     rotate_matrix(45+frame, 0,1,0, modelMatrix);
     //As the memory is still mapped we can write the result stright into uniformMappedMemory:
     multiply_matrix(viewMatrix, modelMatrix, modelBufferVals1->mv);
-//    multiply_matrix(viewMatrix, modelMatrix, tmpMVMatrix2);
-//    multiply_matrix(projectionMatrix, tmpMVMatrix2, modelBufferVals2);
-    //multiply_matrix(projectionMatrix, tmpMVMatrix1, (float*)uniformMappedMemory);
     
     //printf ("Command buffer finished %d.\n", res);
     
