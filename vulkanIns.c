@@ -1299,15 +1299,6 @@ int main(int argc, char* argv[])
 
   vkUnmapMemory(device, vertexMemory);
 
-  VkDescriptorBufferInfo vertexBufferInfoCube;
-  vertexBufferInfoCube.buffer = vertexBuffer;
-  vertexBufferInfoCube.offset = 0;
-  vertexBufferInfoCube.range = sizeof(vetrexDataCube);
-  VkDescriptorBufferInfo vertexBufferInfoPyramid;
-  vertexBufferInfoPyramid.buffer = vertexBuffer;
-  vertexBufferInfoPyramid.offset = sizeof(vetrexDataCube);
-  vertexBufferInfoPyramid.range = sizeof(vetrexDataPyramid);
-
   res = vkBindBufferMemory(device, vertexBuffer, vertexMemory, 0);
   if (res != VK_SUCCESS) {
     printf ("vkBindBufferMemory returned error %d.\n", res);

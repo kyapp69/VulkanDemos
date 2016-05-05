@@ -1149,10 +1149,6 @@ int main(int argc, char* argv[])
 
   vkUnmapMemory(device, vertexMemory);
 
-  VkDescriptorBufferInfo vertexBufferInfo;
-  vertexBufferInfo.buffer = vertexBuffer;
-  vertexBufferInfo.offset = 0;
-  vertexBufferInfo.range = memoryRequirements.size;
 
   res = vkBindBufferMemory(device, vertexBuffer, vertexMemory, 0);
   if (res != VK_SUCCESS) {
