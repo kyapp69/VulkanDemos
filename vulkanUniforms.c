@@ -1170,7 +1170,7 @@ int main(int argc, char* argv[])
   uniformBufferInfo[0].range = sizeof(struct modelBufferVals);
   
   uniformBufferInfo[1].buffer = uniformBuffer;
-  uniformBufferInfo[1].offset = 512;
+  uniformBufferInfo[1].offset = modelBufferValsOffset*2;
   uniformBufferInfo[1].range = sizeof(struct sceneBufferVals);
   
   uniformBufferInfo[2].buffer = uniformBuffer;
@@ -1178,7 +1178,7 @@ int main(int argc, char* argv[])
   uniformBufferInfo[2].range = sizeof(struct modelBufferVals);
   
   uniformBufferInfo[3].buffer = uniformBuffer;
-  uniformBufferInfo[3].offset = 512;
+  uniformBufferInfo[3].offset = modelBufferValsOffset*2;
   uniformBufferInfo[3].range = sizeof(struct sceneBufferVals);
   
   //Create a descriptor pool
