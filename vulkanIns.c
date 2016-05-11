@@ -15,7 +15,7 @@
 
 #define NUM_SAMPLES 1
     
-struct Vertexa{
+struct Vertex{
     float posX, posY, posZ, posW; // Position data
     float r, g, b, a;             // Color
     float x, y, z, w;             // Normal
@@ -23,7 +23,7 @@ struct Vertexa{
 
 #define XYZ1(_x_, _y_, _z_) (_x_), (_y_), (_z_), 1.f
 
-static const struct Vertexa vetrexDataCube[] = {
+static const struct Vertex vetrexDataCube[] = {
     {XYZ1(-1, -1, -1), XYZ1(0.f, 0.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
     {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
     {XYZ1(-1, 1, -1), XYZ1(0.f, 1.f, 0.f), XYZ1(0.f, 0.f, -1.f)},
@@ -70,7 +70,7 @@ static const struct Vertexa vetrexDataCube[] = {
 #define F1_3 1.0f/3.0f
 #define F2_3 2.0f/3.0f
 
-static const struct Vertexa vetrexDataPyramid[] = {
+static const struct Vertex vetrexDataPyramid[] = {
     {XYZ1(-1, -1, -1), XYZ1(0.f, 0.f, 0.f), XYZ1(0.f, F1_3, -F2_3)},
     {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f), XYZ1(0.f, F1_3, -F2_3)},
     {XYZ1(0, 1, 0), XYZ1(0.f, 1.f, 0.f), XYZ1(0.f, F1_3, -F2_3)},
@@ -625,12 +625,6 @@ struct sceneBufferVals {
 
 int main(int argc, char* argv[])
 {
-//void* vulkan_so=dlopen("libvulkan.so", RTLD_NOW|RTLD_LOCAL);
-//if (!vulkan_so)
-//{
-//	printf("Cannot Find Vulkan Loader");
-//return 1;
-//}
   //Initialize the VkApplicationInfo structure
   VkResult res;
   VkApplicationInfo app_info;
@@ -1307,7 +1301,7 @@ int main(int argc, char* argv[])
   VkVertexInputBindingDescription vertexInputBindingDescription;
   vertexInputBindingDescription.binding = 0;
   vertexInputBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-  vertexInputBindingDescription.stride = sizeof(struct Vertexa);
+  vertexInputBindingDescription.stride = sizeof(struct Vertex);
 
   VkVertexInputAttributeDescription vertexInputAttributeDescription[3];
   for (int i = 0; i < 3; i++)

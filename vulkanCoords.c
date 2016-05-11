@@ -15,14 +15,14 @@
 
 #define NUM_SAMPLES 1
     
-struct Vertexa{
+struct Vertex{
     float posX, posY, posZ, posW; // Position data
     float r, g, b, a;             // Color
 };
 
 #define XYZ1(_x_, _y_, _z_) (_x_), (_y_), (_z_), 1.f
 
-static const struct Vertexa g_vbData[] = {
+static const struct Vertex vertexData[] = {
  {XYZ1(-1, -1, -1), XYZ1(1.f, 0.f, 0.f)},
     {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f)},
     {XYZ1(-1, 1, -1), XYZ1(1.f, 0.f, 0.f)},
@@ -586,12 +586,6 @@ int resizeBuffers(VkCommandBuffer setupBuffer, VkQueue queue, VkPhysicalDevice *
 
 int main(int argc, char* argv[])
 {
-//void* vulkan_so=dlopen("libvulkan.so", RTLD_NOW|RTLD_LOCAL);
-//if (!vulkan_so)
-//{
-//	printf("Cannot Find Vulkan Loader");
-//return 1;
-//}
   //Initialize the VkApplicationInfo structure
   VkResult res;
   VkApplicationInfo app_info;
@@ -1155,7 +1149,7 @@ int main(int argc, char* argv[])
   vertexBufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
   vertexBufferCreateInfo.pNext = NULL;
   vertexBufferCreateInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-  vertexBufferCreateInfo.size = sizeof(g_vbData);
+  vertexBufferCreateInfo.size = sizeof(vertexData);
   vertexBufferCreateInfo.queueFamilyIndexCount = 0;
   vertexBufferCreateInfo.pQueueFamilyIndices = NULL;
   vertexBufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
@@ -1208,7 +1202,7 @@ int main(int argc, char* argv[])
     return -1;
   }
   
-  memcpy(vertexMappedMemory, g_vbData, sizeof(g_vbData));
+  memcpy(vertexMappedMemory, vertexData, sizeof(vertexData));
 
   vkUnmapMemory(device, vertexMemory);
 
@@ -1220,7 +1214,7 @@ int main(int argc, char* argv[])
   VkVertexInputBindingDescription vertexInputBindingDescription;
   vertexInputBindingDescription.binding = 0;
   vertexInputBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-  vertexInputBindingDescription.stride = sizeof(g_vbData[0]);
+  vertexInputBindingDescription.stride = sizeof(vertexData[0]);
 
   VkVertexInputAttributeDescription vertexInputAttributeDescription[2];
   vertexInputAttributeDescription[0].binding = 0;
