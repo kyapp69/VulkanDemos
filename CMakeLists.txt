@@ -11,6 +11,7 @@ add_executable(vulkanResizable vulkanResizable.c)
 add_executable(vulkanReuseCommandBuffer vulkanReuseCommandBuffer.c)
 add_executable(vulkanUniforms vulkanUniforms.c)
 add_executable(vulkanIns vulkanIns.c)
+add_executable(vulkanTexture vulkanTexture.c)
 
 target_link_libraries(vulkanCombined vulkan xcb xcb-icccm m)
 target_link_libraries(vulkanCoords vulkan xcb xcb-icccm m)
@@ -18,4 +19,5 @@ target_link_libraries(vulkanResizable vulkan xcb m)
 target_link_libraries(vulkanReuseCommandBuffer vulkan xcb xcb-icccm m)
 target_link_libraries(vulkanUniforms vulkan xcb m)
 target_link_libraries(vulkanIns vulkan xcb m)
+target_link_libraries(vulkanTexture vulkan xcb m)
 
