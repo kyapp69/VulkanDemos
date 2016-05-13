@@ -879,6 +879,31 @@ int main(int argc, char* argv[])
     return -1;
   }  
 
+  //Submit the setup command buffer
+  VkSubmitInfo submitInfo[1];
+  submitInfo[0].pNext = NULL;
+  submitInfo[0].sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+  submitInfo[0].waitSemaphoreCount = 0;
+  submitInfo[0].pWaitSemaphores = NULL;
+  submitInfo[0].pWaitDstStageMask = NULL;
+  submitInfo[0].commandBufferCount = 1;
+  submitInfo[0].pCommandBuffers = &commandBuffers[0];
+  submitInfo[0].signalSemaphoreCount = 0;
+  submitInfo[0].pSignalSemaphores = NULL;
+
+  //Queue the command buffer for execution
+  res = vkQueueSubmit(queue, 1, submitInfo, VK_NULL_HANDLE);
+  if (res != VK_SUCCESS) {
+    printf ("vkQueueSubmit returned error %d.\n", res);
+    return -1;
+  }
+
+  res = vkQueueWaitIdle(queue);
+  if (res != VK_SUCCESS) {
+    printf ("vkQueueWaitIdle returned error %d.\n", res);
+    return -1;
+  }
+
   //Setup the renderpass:
   VkAttachmentDescription attachments[2];
   attachments[0].format = format;
@@ -1381,7 +1406,7 @@ int main(int argc, char* argv[])
   rs.depthBiasConstantFactor = 0;
   rs.depthBiasClamp = 0;
   rs.depthBiasSlopeFactor = 0;
-  rs.lineWidth = 0;
+  rs.lineWidth = 1;
 
   VkPipelineColorBlendStateCreateInfo cb;
   cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
@@ -1677,8 +1702,8 @@ int main(int argc, char* argv[])
     vkCreateFence(device, &fenceInfo, NULL, &drawFence);
   
     VkPipelineStageFlags pipe_stage_flags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-    
-    //Submit the setup command buffer
+
+    //Submit the main render command buffer
     VkSubmitInfo submitInfo[1];
     submitInfo[0].pNext = NULL;
     submitInfo[0].sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

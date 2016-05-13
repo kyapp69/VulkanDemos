@@ -532,8 +532,8 @@ int resizeBuffers(VkCommandBuffer setupBuffer, VkQueue queue, VkPhysicalDevice *
   //We do not have to free the memory or destroy images for the swapchain (this is done for us by vkDestroySwapchainKHR)
   
   if (initSwapchain(physicalDevices, device, surface, pSwapchain, pFormat)<0)
-  return -1;
-    
+  return -1;   
+
   VkCommandBufferBeginInfo commandBufferBeginInfo = {};
   commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
   commandBufferBeginInfo.pNext = NULL;
@@ -575,13 +575,13 @@ int resizeBuffers(VkCommandBuffer setupBuffer, VkQueue queue, VkPhysicalDevice *
   if (res != VK_SUCCESS) {
     printf ("vkQueueSubmit returned error %d.\n", res);
     return -1;
-  }  
+  }
   
   res = vkQueueWaitIdle(queue);
   if (res != VK_SUCCESS) {
     printf ("vkQueueWaitIdle returned error %d.\n", res);
     return -1;
-  }    
+  }
 }
 
 int main(int argc, char* argv[])
@@ -869,6 +869,31 @@ int main(int argc, char* argv[])
     printf ("vkEndCommandBuffer returned error %d.\n", res);
     return -1;
   }  
+
+  //Submit the setup command buffer
+  VkSubmitInfo submitInfo[1];
+  submitInfo[0].pNext = NULL;
+  submitInfo[0].sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+  submitInfo[0].waitSemaphoreCount = 0;
+  submitInfo[0].pWaitSemaphores = NULL;
+  submitInfo[0].pWaitDstStageMask = NULL;
+  submitInfo[0].commandBufferCount = 1;
+  submitInfo[0].pCommandBuffers = &commandBuffers[0];
+  submitInfo[0].signalSemaphoreCount = 0;
+  submitInfo[0].pSignalSemaphores = NULL;
+
+  //Queue the command buffer for execution
+  res = vkQueueSubmit(queue, 1, submitInfo, VK_NULL_HANDLE);
+  if (res != VK_SUCCESS) {
+    printf ("vkQueueSubmit returned error %d.\n", res);
+    return -1;
+  }
+
+  res = vkQueueWaitIdle(queue);
+  if (res != VK_SUCCESS) {
+    printf ("vkQueueWaitIdle returned error %d.\n", res);
+    return -1;
+  }
 
   //Setup the renderpass:
   VkAttachmentDescription attachments[2];
@@ -1304,7 +1329,7 @@ int main(int argc, char* argv[])
   rs.depthBiasConstantFactor = 0;
   rs.depthBiasClamp = 0;
   rs.depthBiasSlopeFactor = 0;
-  rs.lineWidth = 0;
+  rs.lineWidth = 1;
 
   VkPipelineColorBlendStateCreateInfo cb;
   cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
@@ -1415,7 +1440,7 @@ int main(int argc, char* argv[])
   int done = 0;
   int newSwapchainRequired = 0;
   uint32_t currentBuffer;
-    
+
   //The main event loop
   while (1==1) {    
     //printf ("Starting frame %d.\n", frame);    
@@ -1536,8 +1561,8 @@ int main(int argc, char* argv[])
     // Put barrier on top
     VkPipelineStageFlags srcStageFlags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     VkPipelineStageFlags destStageFlags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    vkCmdPipelineBarrier(commandBuffers[1], srcStageFlags, destStageFlags, 0, 
-		0, NULL, 0, NULL, 1, &imageMemoryBarrier);
+    vkCmdPipelineBarrier(commandBuffers[1], srcStageFlags, destStageFlags, 0,
+        0, NULL, 0, NULL, 1, &imageMemoryBarrier);
     
     vkCmdBeginRenderPass(commandBuffers[1], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
     vkCmdBindPipeline(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
@@ -1584,8 +1609,8 @@ int main(int argc, char* argv[])
     prePresentBarrier.subresourceRange.layerCount = 1;
     prePresentBarrier.image = swapChainImages[currentBuffer];
     vkCmdPipelineBarrier(commandBuffers[1], VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-			  VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0,
-			  NULL, 1, &prePresentBarrier);
+              VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0,
+              NULL, 1, &prePresentBarrier);
     
     res = vkEndCommandBuffer(commandBuffers[1]);
     if (res != VK_SUCCESS) {
@@ -1602,7 +1627,7 @@ int main(int argc, char* argv[])
   
     VkPipelineStageFlags pipe_stage_flags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
     
-    //Submit the setup command buffer
+    //Submit the main render command buffer
     VkSubmitInfo submitInfo[1];
     submitInfo[0].pNext = NULL;
     submitInfo[0].sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

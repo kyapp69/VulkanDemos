@@ -1258,7 +1258,7 @@ int main(int argc, char* argv[])
   rs.depthBiasConstantFactor = 0;
   rs.depthBiasClamp = 0;
   rs.depthBiasSlopeFactor = 0;
-  rs.lineWidth = 0;
+  rs.lineWidth = 1;
 
   VkPipelineColorBlendStateCreateInfo cb;
   cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
