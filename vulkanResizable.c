@@ -469,7 +469,7 @@ int initDepthBuffer(VkPhysicalDevice *physicalDevices, VkDevice device, VkSwapch
   imageMemoryBarrier.dstQueueFamilyIndex=0;
   imageMemoryBarrier.srcAccessMask = 0;
   imageMemoryBarrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-  
+
   // Put barrier on top
   VkPipelineStageFlags srcStageFlags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
   VkPipelineStageFlags destStageFlags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
