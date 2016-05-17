@@ -20,4 +20,3 @@ target_link_libraries(vulkanReuseCommandBuffer vulkan xcb xcb-icccm m)
 target_link_libraries(vulkanUniforms vulkan xcb m)
 target_link_libraries(vulkanIns vulkan xcb m)
 target_link_libraries(vulkanTexture vulkan xcb m)
-

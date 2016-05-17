@@ -1477,14 +1477,15 @@ int main(int argc, char* argv[])
                  break;	   
 	      case XCB_CONFIGURE_NOTIFY:;
 	        const xcb_configure_notify_event_t *cfg = (const xcb_configure_notify_event_t *)e;
-	        if ((width != cfg->width) || (height != cfg->height)) {
-            //The window has been re-sized
-            newSwapchainRequired=1;
-            width = cfg->width;
-            height = cfg->height;
-            //The aspect ratio may have changed, build a now perspective matrix:
-	          perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 0.1f, 100.0f, projectionMatrix);
-	        }
+            if ((width != cfg->width) || (height != cfg->height)) {
+                //The window has been re-sized
+                newSwapchainRequired=1;
+                width = cfg->width;
+                height = cfg->height;
+                //The aspect ratio may have changed, build a now perspective matrix:
+                perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 0.1f, 100.0f, projectionMatrix);
+                multiply_matrix(projectionMatrix, MVMatrix, (float*)uniformMappedMemory);
+            }
           break;
       }
       if ((e->response_type & ~0x80)==XCB_CLIENT_MESSAGE)

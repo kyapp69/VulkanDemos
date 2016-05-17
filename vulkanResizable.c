@@ -308,7 +308,7 @@ int initColourBuffers(VkPhysicalDevice *physicalDevices, VkDevice device, VkSwap
   VkImageView *swapChainViews = malloc(sizeof(VkImageView)*swapchainImageCount);
   *pSwapChainViews=swapChainViews;
   for (uint32_t i = 0; i < swapchainImageCount; i++) {
-    printf ("Setting up swapChainView %d.\n",i);
+    printf ("Setting up swapChainView for swapchain image %d.\n", swapChainImages[i]);
     VkImageViewCreateInfo color_image_view = {};
     color_image_view.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     color_image_view.pNext = NULL;
@@ -355,8 +355,9 @@ int initColourBuffers(VkPhysicalDevice *physicalDevices, VkDevice device, VkSwap
       printf ("vkCreateImageView returned error.\n");
       return -1;
     }
+    printf ("Colour buffer image view created: %d\n", swapChainViews[i]);
   }  
-  printf ("swapchainImageCount %d.\n", swapchainImageCount);    
+  printf ("swapchainImageCount %d.\n", swapchainImageCount);
 }
 
 int initDepthBuffer(VkPhysicalDevice *physicalDevices, VkDevice device, VkSwapchainKHR swapchain, VkFormat depth_format, VkCommandBuffer setupBuffer, VkImage *pDepthImage, VkImageView *pDepthView, VkDeviceMemory *pDepthMemory)
@@ -418,6 +419,7 @@ int initDepthBuffer(VkPhysicalDevice *physicalDevices, VkDevice device, VkSwapch
     printf ("vkCreateImage returned error while creating depth buffer.\n");
     return -1;
   }  
+  printf ("Depth image created: %d\n", *pDepthImage);
 
   VkMemoryRequirements memoryRequirements;
   vkGetImageMemoryRequirements(device, *pDepthImage, &memoryRequirements);  
@@ -443,6 +445,7 @@ int initDepthBuffer(VkPhysicalDevice *physicalDevices, VkDevice device, VkSwapch
     printf ("vkAllocateMemory returned error while creating depth buffer.\n");
     return -1;
   }  
+  printf ("Depth image memory allocated\n");
     
   //Bind memory
   res = vkBindImageMemory(device, *pDepthImage, *pDepthMemory, 0);
@@ -482,6 +485,7 @@ int initDepthBuffer(VkPhysicalDevice *physicalDevices, VkDevice device, VkSwapch
     printf ("vkCreateImageView returned error while creating depth buffer. %d\n", res);
     return -1;
   }    
+  printf ("Depth image view created: %d\n", *pDepthView);
 }
 
 int initFrameBuffers(VkDevice device, VkRenderPass renderPass, int swapchainImageCount, VkImageView *swapChainViews, VkImageView depthView, VkFramebuffer **pFramebuffers)
@@ -521,14 +525,20 @@ int initFrameBuffers(VkDevice device, VkRenderPass renderPass, int swapchainImag
 int resizeBuffers(VkCommandBuffer setupBuffer, VkQueue queue, VkPhysicalDevice *physicalDevices, VkDevice device, VkSurfaceKHR surface, VkSwapchainKHR *pSwapchain, VkFormat *pFormat, VkImage **pSwapChainImages, VkImageView **pSwapChainViews, int *pSwapchainImageCount, VkFormat depth_format, VkImage *pDepthImage, VkImageView *pDepthView, VkDeviceMemory *pDepthMemory)
 {  
   VkResult res;
-  printf("resize() %d, %d\n",width,height);   
+  printf("resize() %d, %d\n",width,height);
   
   //First thing we need to do is delete the existing buffers (or we will have a graphics memory leak):
+  printf("Destroying depth image view: %d\n", *pDepthView);
   vkDestroyImageView(device, *pDepthView, 0);
+  printf("Freeing depth memory\n");
   vkFreeMemory(device, *pDepthMemory, 0);
+  printf("Destroying depth image: %d\n", *pDepthImage);
   vkDestroyImage(device, *pDepthImage, 0); 
   for (int i =0; i<*pSwapchainImageCount; i++)
-    vkDestroyImageView(device, (*pSwapChainViews)[i], 0);
+  {
+      printf("Destroying swapchain image view: %d\n", (*pSwapChainViews)[i]);
+      vkDestroyImageView(device, (*pSwapChainViews)[i], 0);
+  }
   //We do not have to free the memory or destroy images for the swapchain (this is done for us by vkDestroySwapchainKHR)
   
   if (initSwapchain(physicalDevices, device, surface, pSwapchain, pFormat)<0)
@@ -1443,7 +1453,7 @@ int main(int argc, char* argv[])
 
   //The main event loop
   while (1==1) {    
-    //printf ("Starting frame %d.\n", frame);    
+    //printf ("Starting frame %d.\n", frame);
    
     //This semaphore will be signalled after the next image is acquired. The first command buffer will wait until this happens before starting the render pass.
     vkDestroySemaphore(device, presentCompleteSemaphore, NULL);
@@ -1459,7 +1469,10 @@ int main(int argc, char* argv[])
       printf ("vkAcquireNextImageKHR returned error.\n");
       return -1;
     }else if (res == VK_ERROR_OUT_OF_DATE_KHR)
-      newSwapchainRequired=1;
+    {
+        printf ("vkAcquireNextImageKHR returned VK_ERROR_OUT_OF_DATE_KHR.\n");
+        newSwapchainRequired=1;
+    }
 
     while (1==1) {
       e = xcb_poll_for_event(connection);
@@ -1475,15 +1488,17 @@ int main(int argc, char* argv[])
 	        done=1;
                  break;	   
 	      case XCB_CONFIGURE_NOTIFY:;
-	        const xcb_configure_notify_event_t *cfg = (const xcb_configure_notify_event_t *)e;
-	        if ((width != cfg->width) || (height != cfg->height)) {
-            //The window has been re-sized
-            newSwapchainRequired=1;
-            width = cfg->width;
-            height = cfg->height;
-            //The aspect ratio may have changed, build a now perspective matrix:
-	          perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 0.1f, 100.0f, projectionMatrix);
-	        }
+              const xcb_configure_notify_event_t *cfg = (const xcb_configure_notify_event_t *)e;
+              if ((width != cfg->width) || (height != cfg->height)) {
+                  //The window has been re-sized
+                  printf ("Window resized.\n");
+                  newSwapchainRequired=1;
+                  width = cfg->width;
+                  height = cfg->height;
+                  //The aspect ratio may have changed, build a now perspective matrix:
+                  perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 0.1f, 100.0f, projectionMatrix);
+                  multiply_matrix(projectionMatrix, MVMatrix, (float*)uniformMappedMemory);
+              }
           break;
       }
       if ((e->response_type & ~0x80)==XCB_CLIENT_MESSAGE)
@@ -1518,11 +1533,13 @@ int main(int argc, char* argv[])
         printf ("vkCreateSemaphore returned error %d.\n", res);
         return -1;
       }
-      res = vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, presentCompleteSemaphore, NULL, &currentBuffer);
+
+      res = vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, presentCompleteSemaphore, 0, &currentBuffer);
       if (res != VK_SUCCESS) {
         printf ("vkAcquireNextImageKHR returned error.\n");
         return -1;
-      } 
+      }
+      fflush(stdout);
     } 
        
     VkRenderPassBeginInfo renderPassBeginInfo;
@@ -1645,7 +1662,7 @@ int main(int argc, char* argv[])
       printf ("vkQueueSubmit returned error %d.\n", res);
       return -1;
     }  
-    
+
     //This waits for the queue to finish (this also involves waiting for vsync as the first buffer in this queue will wait on on the presntcomplete semaphore to be singled by vkAcquireNextImageKHR before starting).
     int timeoutCount = 0;
     do {      
@@ -1683,9 +1700,8 @@ int main(int argc, char* argv[])
     if (res != VK_SUCCESS) {
       printf ("vkQueuePresentKHR returned error %d.\n", res);
       return -1;
-    }   
-    
-    //printf ("Finished frame %d.\n", frame);
+    }
+
     frame++;
   }
   return 0;
