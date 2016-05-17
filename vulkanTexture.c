@@ -865,11 +865,202 @@ int main(int argc, char* argv[])
   VkDeviceMemory depthMemory;
   initDepthBuffer(physicalDevices, device, swapchain, depth_format, commandBuffers[0], &depthImage, &depthView, &depthMemory);
 		
+  //Setup the texture
+  uint txWidth = 256;
+  uint txHeight = 256;
+
+  VkFormatProperties formatProprties;
+  vkGetPhysicalDeviceFormatProperties(physicalDevices[0], VK_FORMAT_R8G8B8A8_UNORM, &formatProprties);
+
+  if (!formatProprties.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT)
+  {
+      fprintf(stderr, "Error Linear tiling not supported for VK_FORMAT_R8G8B8A8_UNORM using linear tiling\n");
+      return -1;
+  }
+
+  VkImageCreateInfo imageCreateInfo = {};
+  imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+  imageCreateInfo.pNext = NULL;
+  imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
+  imageCreateInfo.format = VK_FORMAT_R8G8B8A8_UNORM;
+  imageCreateInfo.extent.width = txWidth;
+  imageCreateInfo.extent.height = txHeight;
+  imageCreateInfo.extent.depth = 1;
+  imageCreateInfo.mipLevels = 1;
+  imageCreateInfo.arrayLayers = 1;
+  imageCreateInfo.samples = 1;
+  imageCreateInfo.tiling = VK_IMAGE_TILING_LINEAR;
+  imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
+  imageCreateInfo.usage = VK_IMAGE_USAGE_SAMPLED_BIT;
+  imageCreateInfo.queueFamilyIndexCount = 0;
+  imageCreateInfo.pQueueFamilyIndices = NULL;
+  imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+  imageCreateInfo.flags = 0;
+
+  VkImage textureImage;
+  res = vkCreateImage(device, &imageCreateInfo, NULL, &textureImage);
+  if (res != VK_SUCCESS) {
+    printf ("vkCreateImage returned error %d.\n", res);
+    return -1;
+  }
+
+  VkDeviceMemory textureMemory;
+
+  {
+      VkMemoryRequirements memoryRequirements;
+      vkGetImageMemoryRequirements(device, textureImage, &memoryRequirements);
+
+      uint32_t typeBits = memoryRequirements.memoryTypeBits;
+      uint32_t typeIndex;
+      VkFlags requirements_mask = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+      for (typeIndex = 0; typeIndex < physicalDeviceMemoryProperties.memoryTypeCount; typeIndex++) {
+        if ((typeBits & 1) == 1)//Check last bit;
+        {
+          if ((physicalDeviceMemoryProperties.memoryTypes[typeIndex].propertyFlags & requirements_mask) == requirements_mask)
+          {
+              found=1;
+              break;
+          }
+          typeBits >>= 1;
+        }
+      }
+      if (!found)
+      {
+        printf ("Did not find a suitible memory type.\n");
+        return -1;
+      }
+
+      VkMemoryAllocateInfo memAllocInfo;
+      memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+      memAllocInfo.pNext = NULL;
+      memAllocInfo.allocationSize = memoryRequirements.size;
+      memAllocInfo.memoryTypeIndex = typeIndex;
+
+      //Allocate memory
+      res = vkAllocateMemory(device, &memAllocInfo, NULL, &textureMemory);
+      if (res != VK_SUCCESS) {
+        printf ("vkAllocateMemory returned error while creating depth buffer.\n");
+        return -1;
+      }
+
+      uint8_t *textureMappedMemory;
+      res = vkMapMemory(device, textureMemory, 0, memoryRequirements.size, 0, (void **)&textureMappedMemory);
+      if (res != VK_SUCCESS) {
+        printf ("vkMapMemory returned error while creating texture. %d\n", res);
+        return -1;
+      }
+
+      //Draw a chess board directly to mapped memory
+      uint squareXSize=txWidth/8;
+      uint squareYSize=txHeight/8;
+      uint shade = 0;
+      for (uint row=0; row<8; row++)
+      {
+          for (uint x=0; x<squareYSize; x++)
+          {
+              shade=row%2;
+              for (uint y=0; y<8; y++)
+              {
+                  memset(textureMappedMemory, shade ? 0 : 255, squareXSize*4);
+                  textureMappedMemory+=(squareXSize*4);
+                  shade=!shade;
+              }
+          };
+      }
+
+      vkUnmapMemory(device, textureMemory);
+
+      //Bind memory
+      res = vkBindImageMemory(device, textureImage, textureMemory, 0);
+      if (res != VK_SUCCESS) {
+        printf ("vkBindImageMemory returned error while creating texture. %d\n", res);
+        return -1;
+      }
+
+      VkImageMemoryBarrier imageMemoryBarrier;
+      imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+      imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
+      imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+      imageMemoryBarrier.pNext = NULL;
+      imageMemoryBarrier.image = textureImage;
+      imageMemoryBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+      imageMemoryBarrier.subresourceRange.baseMipLevel = 0;
+      imageMemoryBarrier.subresourceRange.levelCount = 1;
+      imageMemoryBarrier.subresourceRange.baseArrayLayer = 0;
+      imageMemoryBarrier.subresourceRange.layerCount = 1;
+      imageMemoryBarrier.srcQueueFamilyIndex=0;
+      imageMemoryBarrier.dstQueueFamilyIndex=0;
+      imageMemoryBarrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
+      imageMemoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+      // Put barrier on top
+      VkPipelineStageFlags srcStageFlags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+      VkPipelineStageFlags destStageFlags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+
+      // Put barrier inside setup command buffer
+      vkCmdPipelineBarrier(commandBuffers[0], srcStageFlags, destStageFlags, 0,
+              0, NULL, 0, NULL, 1, &imageMemoryBarrier);
+  }
+
+  VkImageViewCreateInfo imageViewCreateInfo;
+  imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+  imageViewCreateInfo.pNext = NULL;
+  imageViewCreateInfo.image = textureImage;
+  imageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+  imageViewCreateInfo.format = VK_FORMAT_R8G8B8A8_UNORM;
+  imageViewCreateInfo.components.r = VK_COMPONENT_SWIZZLE_R;
+  imageViewCreateInfo.components.g = VK_COMPONENT_SWIZZLE_G;
+  imageViewCreateInfo.components.b = VK_COMPONENT_SWIZZLE_B;
+  imageViewCreateInfo.components.a = VK_COMPONENT_SWIZZLE_A;
+  imageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+  imageViewCreateInfo.subresourceRange.baseMipLevel = 0;
+  imageViewCreateInfo.subresourceRange.levelCount = 1;
+  imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
+  imageViewCreateInfo.subresourceRange.layerCount = 1;
+
+  VkImageView textureImageView;
+  res = vkCreateImageView(device, &imageViewCreateInfo, NULL, &textureImageView);
+  if (res != VK_SUCCESS) {
+      printf ("vkCreateImageView returned error %d.\n", res);
+      return -1;
+  }
+
+  VkSampler sampler;
+
+  VkSamplerCreateInfo samplerCreateInfo = {};
+  samplerCreateInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+  samplerCreateInfo.magFilter = VK_FILTER_LINEAR;
+  samplerCreateInfo.minFilter = VK_FILTER_LINEAR;
+  samplerCreateInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+  samplerCreateInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+  samplerCreateInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+  samplerCreateInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+  samplerCreateInfo.mipLodBias = 0.0;
+  samplerCreateInfo.anisotropyEnable = VK_FALSE;
+  samplerCreateInfo.maxAnisotropy = 0;
+  samplerCreateInfo.compareOp = VK_COMPARE_OP_NEVER;
+  samplerCreateInfo.minLod = 0.0;
+  samplerCreateInfo.maxLod = 0.0;
+  samplerCreateInfo.compareEnable = VK_FALSE;
+  samplerCreateInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
+
+  res = vkCreateSampler(device, &samplerCreateInfo, NULL, &sampler);
+  if (res != VK_SUCCESS) {
+    printf ("vkCreateSampler returned error %d.\n", res);
+    return -1;
+  }
+
+  VkDescriptorImageInfo textureInfo;
+  textureInfo.sampler = sampler;
+  textureInfo.imageView = textureImageView;
+  textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+
   res = vkEndCommandBuffer(commandBuffers[0]);
   if (res != VK_SUCCESS) {
     printf ("vkEndCommandBuffer returned error %d.\n", res);
     return -1;
-  }  
+  }
 
   //Submit the setup command buffer
   VkSubmitInfo submitInfo[1];
@@ -895,6 +1086,7 @@ int main(int argc, char* argv[])
     printf ("vkQueueWaitIdle returned error %d.\n", res);
     return -1;
   }
+
 
   //Setup the renderpass:
   VkAttachmentDescription attachments[2];
@@ -959,18 +1151,23 @@ int main(int argc, char* argv[])
   }    
   
   //Setup the pipeline
-  VkDescriptorSetLayoutBinding layout_bindings[1];
+  VkDescriptorSetLayoutBinding layout_bindings[2];
   layout_bindings[0].binding = 0;
   layout_bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
   layout_bindings[0].descriptorCount = 1;
   layout_bindings[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
   layout_bindings[0].pImmutableSamplers = NULL;
+  layout_bindings[1].binding = 1;
+  layout_bindings[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+  layout_bindings[1].descriptorCount = 1;
+  layout_bindings[1].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+  layout_bindings[1].pImmutableSamplers = NULL;
   
   //Next take layout bindings and use them to create a descriptor set layout
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo;
   descriptorSetLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
   descriptorSetLayoutCreateInfo.pNext = NULL;
-  descriptorSetLayoutCreateInfo.bindingCount = 1;
+  descriptorSetLayoutCreateInfo.bindingCount = 2;
   descriptorSetLayoutCreateInfo.pBindings = layout_bindings;
     
   VkDescriptorSetLayout descriptorSetLayout;
@@ -1150,15 +1347,17 @@ int main(int argc, char* argv[])
   uniformBufferInfo.range = sizeof(MVPMatrix);
   
   //Create a descriptor pool
-  VkDescriptorPoolSize typeCounts[1];
+  VkDescriptorPoolSize typeCounts[2];
   typeCounts[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
   typeCounts[0].descriptorCount = 1;
+  typeCounts[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+  typeCounts[1].descriptorCount = 1;
 
   VkDescriptorPoolCreateInfo descriptorPoolInfo;
   descriptorPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
   descriptorPoolInfo.pNext = NULL;
   descriptorPoolInfo.maxSets = 1;
-  descriptorPoolInfo.poolSizeCount = 1;
+  descriptorPoolInfo.poolSizeCount = 2;
   descriptorPoolInfo.pPoolSizes = typeCounts;
 
   VkDescriptorPool descriptorPool;
@@ -1265,7 +1464,7 @@ int main(int argc, char* argv[])
     printf ("vkAllocateDescriptorSets returned error %d.\n", res);
     return -1;
   }
-  VkWriteDescriptorSet writes[1];
+  VkWriteDescriptorSet writes[2];
   writes[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
   writes[0].pNext = NULL;
   writes[0].dstSet = descriptorSets[0];
@@ -1274,8 +1473,16 @@ int main(int argc, char* argv[])
   writes[0].pBufferInfo = &uniformBufferInfo;
   writes[0].dstArrayElement = 0;
   writes[0].dstBinding = 0;
+  writes[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+  writes[1].pNext = NULL;
+  writes[1].dstSet = descriptorSets[0];
+  writes[1].descriptorCount = 1;
+  writes[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+  writes[1].pImageInfo = &textureInfo;
+  writes[1].dstArrayElement = 0;
+  writes[1].dstBinding = 1;
 
-  vkUpdateDescriptorSets(device, 1, writes, 0, NULL); 
+  vkUpdateDescriptorSets(device, 2, writes, 0, NULL);
     /*
   //Create a pipeline cache
   VkPipelineCache pipelineCache;
@@ -1686,7 +1893,7 @@ int main(int argc, char* argv[])
       printf ("vkQueuePresentKHR returned error %d.\n", res);
       return -1;
     }   
-    
+
     //printf ("Finished frame %d.\n", frame);
     frame++;
   }
