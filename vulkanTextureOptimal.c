@@ -1123,6 +1123,12 @@ int main(int argc, char* argv[])
 
       vkUnmapMemory(device, textureStageMemory);
 
+      res = vkBindBufferMemory(device, textureStageBuffer, textureStageMemory, 0);
+      if (res != VK_SUCCESS) {
+        printf ("vkBindBufferMemory returned error %d.\n", res);
+        return -1;
+      }
+
       VkBufferMemoryBarrier textureBufferBarrier = {};
       textureBufferBarrier.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
       textureBufferBarrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
@@ -1157,14 +1163,16 @@ int main(int argc, char* argv[])
       vkCmdPipelineBarrier(commandBuffers[0], srcStageFlags, destStageFlags, 0,
               0, NULL, 1, &textureBufferBarrier, 1, &imageMemoryBarrier);
 
-      VkBufferImageCopy copyRegion;
+      VkBufferImageCopy copyRegion = {};
       copyRegion.bufferOffset=0;
       copyRegion.bufferRowLength=0;
       copyRegion.bufferImageHeight=0;
       copyRegion.imageOffset.x=0;
       copyRegion.imageOffset.y=0;
+      copyRegion.imageOffset.z=0;
       copyRegion.imageExtent.width=txWidth;
       copyRegion.imageExtent.height=txHeight;
+      copyRegion.imageExtent.depth=1;
       copyRegion.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
       copyRegion.imageSubresource.mipLevel = 0;
       copyRegion.imageSubresource.baseArrayLayer = 0;
@@ -1190,8 +1198,6 @@ int main(int argc, char* argv[])
       // Put barrier inside setup command buffer
       vkCmdPipelineBarrier(commandBuffers[0], srcStageFlags, destStageFlags, 0,
               0, NULL, 0, NULL, 1, &imageMemoryBarrier);
-
-
   }
 
   VkImageViewCreateInfo imageViewCreateInfo;
