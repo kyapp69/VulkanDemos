@@ -1629,8 +1629,8 @@ int main(int argc, char* argv[])
       imageMemoryBarrier.dstQueueFamilyIndex=0;
       imageMemoryBarrier.srcAccessMask = 0;
       imageMemoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-
+      vkCmdPipelineBarrier(commandBuffers[0], VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0,
+          0, NULL, 0, NULL, 1, &imageMemoryBarrier);
   }
 
   VkImageViewCreateInfo imageViewCreateInfo;
