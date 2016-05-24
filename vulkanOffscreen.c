@@ -1865,47 +1865,47 @@ int main(int argc, char* argv[])
       }
     }
     //Render to offscren framebuffer
-    VkRenderPassBeginInfo renderPassBeginInfo;
-    renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassBeginInfo.pNext = NULL;
-    renderPassBeginInfo.renderPass = renderPass;
-    renderPassBeginInfo.framebuffer = offscreenFramebuffer;
-    renderPassBeginInfo.renderArea.offset.x = 0;
-    renderPassBeginInfo.renderArea.offset.y = 0;
-    renderPassBeginInfo.renderArea.extent.width = txWidth;
-    renderPassBeginInfo.renderArea.extent.height = txHeight;
-    renderPassBeginInfo.clearValueCount = 2;
-    renderPassBeginInfo.pClearValues = offscreenClearValues;
-
-    res = vkBeginCommandBuffer(commandBuffers[1], &commandBufferBeginInfo);
-    if (res != VK_SUCCESS) {
-      printf ("vkBeginCommandBuffer returned error.\n");
-      return -1;
-    }
-
-    VkImageMemoryBarrier imageMemoryBarrier;
-    imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-    imageMemoryBarrier.pNext = NULL;
-    imageMemoryBarrier.image = renderTextureImage;
-    imageMemoryBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    imageMemoryBarrier.subresourceRange.baseMipLevel = 0;
-    imageMemoryBarrier.subresourceRange.levelCount = 1;
-    imageMemoryBarrier.subresourceRange.baseArrayLayer = 0;
-    imageMemoryBarrier.subresourceRange.layerCount = 1;
-    imageMemoryBarrier.srcQueueFamilyIndex=0;
-    imageMemoryBarrier.dstQueueFamilyIndex=0;
-    imageMemoryBarrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
-    imageMemoryBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-    vkCmdPipelineBarrier(commandBuffers[1], VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0,
-        0, NULL, 0, NULL, 1, &imageMemoryBarrier);
-
-
-    vkCmdBeginRenderPass(commandBuffers[1], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-    vkCmdBindPipeline(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-
     {
+        VkRenderPassBeginInfo renderPassBeginInfo;
+        renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        renderPassBeginInfo.pNext = NULL;
+        renderPassBeginInfo.renderPass = renderPass;
+        renderPassBeginInfo.framebuffer = offscreenFramebuffer;
+        renderPassBeginInfo.renderArea.offset.x = 0;
+        renderPassBeginInfo.renderArea.offset.y = 0;
+        renderPassBeginInfo.renderArea.extent.width = txWidth;
+        renderPassBeginInfo.renderArea.extent.height = txHeight;
+        renderPassBeginInfo.clearValueCount = 2;
+        renderPassBeginInfo.pClearValues = offscreenClearValues;
+
+        res = vkBeginCommandBuffer(commandBuffers[1], &commandBufferBeginInfo);
+        if (res != VK_SUCCESS) {
+            printf ("vkBeginCommandBuffer returned error.\n");
+            return -1;
+        }
+
+        VkImageMemoryBarrier imageMemoryBarrier;
+        imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        imageMemoryBarrier.pNext = NULL;
+        imageMemoryBarrier.image = renderTextureImage;
+        imageMemoryBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        imageMemoryBarrier.subresourceRange.baseMipLevel = 0;
+        imageMemoryBarrier.subresourceRange.levelCount = 1;
+        imageMemoryBarrier.subresourceRange.baseArrayLayer = 0;
+        imageMemoryBarrier.subresourceRange.layerCount = 1;
+        imageMemoryBarrier.srcQueueFamilyIndex=0;
+        imageMemoryBarrier.dstQueueFamilyIndex=0;
+        imageMemoryBarrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        imageMemoryBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        vkCmdPipelineBarrier(commandBuffers[1], VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0,
+                0, NULL, 0, NULL, 1, &imageMemoryBarrier);
+
+
+        vkCmdBeginRenderPass(commandBuffers[1], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+        vkCmdBindPipeline(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+
         VkViewport viewport;
         viewport.height = (float)height;
         viewport.width = (float)width;
@@ -1922,42 +1922,44 @@ int main(int argc, char* argv[])
 
         vkCmdSetViewport(commandBuffers[1], 0, 1, &viewport);
         vkCmdSetScissor(commandBuffers[1], 0, 1, &scissor);
+
+        VkClearAttachment clear;
+        clear.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        clear.clearValue.color.float32[0]=0;
+        clear.clearValue.color.float32[1]=0.5;
+        clear.clearValue.color.float32[2]=0;
+        clear.clearValue.color.float32[3]=0;
+        clear.colorAttachment=0;
+        VkClearRect clearRect;
+        clearRect.baseArrayLayer=0;
+        clearRect.layerCount=1;
+        clearRect.rect.extent.height=txHeight/4*2;
+        clearRect.rect.extent.width=txWidth/4*2;
+        clearRect.rect.offset.x=txHeight/4;
+        clearRect.rect.offset.y=txWidth/4;
+        vkCmdClearAttachments(commandBuffers[1], 1, &clear, 1, &clearRect);
+        vkCmdEndRenderPass(commandBuffers[1]);
+
+        imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        imageMemoryBarrier.pNext = NULL;
+        imageMemoryBarrier.image = renderTextureImage;
+        imageMemoryBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        imageMemoryBarrier.subresourceRange.baseMipLevel = 0;
+        imageMemoryBarrier.subresourceRange.levelCount = 1;
+        imageMemoryBarrier.subresourceRange.baseArrayLayer = 0;
+        imageMemoryBarrier.subresourceRange.layerCount = 1;
+        imageMemoryBarrier.srcQueueFamilyIndex=0;
+        imageMemoryBarrier.dstQueueFamilyIndex=0;
+        imageMemoryBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        imageMemoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        vkCmdPipelineBarrier(commandBuffers[1], VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0,
+                0, NULL, 0, NULL, 1, &imageMemoryBarrier);
     }
-    VkClearAttachment clear;
-    clear.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    clear.clearValue.color.float32[0]=0;
-    clear.clearValue.color.float32[1]=1;
-    clear.clearValue.color.float32[2]=0;
-    clear.clearValue.color.float32[3]=0;
-    clear.colorAttachment=0;
-    VkClearRect clearRect;
-    clearRect.baseArrayLayer=0;
-    clearRect.layerCount=1;
-    clearRect.rect.extent.height=txHeight/4*2;
-    clearRect.rect.extent.width=txWidth/4*2;
-    clearRect.rect.offset.x=txHeight/4;
-    clearRect.rect.offset.y=txWidth/4;
-    vkCmdClearAttachments(commandBuffers[1], 1, &clear, 1, &clearRect);
-    vkCmdEndRenderPass(commandBuffers[1]);
 
-    imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-    imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    imageMemoryBarrier.pNext = NULL;
-    imageMemoryBarrier.image = renderTextureImage;
-    imageMemoryBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    imageMemoryBarrier.subresourceRange.baseMipLevel = 0;
-    imageMemoryBarrier.subresourceRange.levelCount = 1;
-    imageMemoryBarrier.subresourceRange.baseArrayLayer = 0;
-    imageMemoryBarrier.subresourceRange.layerCount = 1;
-    imageMemoryBarrier.srcQueueFamilyIndex=0;
-    imageMemoryBarrier.dstQueueFamilyIndex=0;
-    imageMemoryBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-    imageMemoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-    vkCmdPipelineBarrier(commandBuffers[1], VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0,
-        0, NULL, 0, NULL, 1, &imageMemoryBarrier);
-
-    //Render to swapchain framebuffer
+    //Render to swapchain framebuffer    
+    VkRenderPassBeginInfo renderPassBeginInfo;
     renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassBeginInfo.pNext = NULL;
     renderPassBeginInfo.renderPass = renderPass;
@@ -1969,6 +1971,7 @@ int main(int argc, char* argv[])
     renderPassBeginInfo.clearValueCount = 2;
     renderPassBeginInfo.pClearValues = swapchainClearValues;
 
+    VkImageMemoryBarrier imageMemoryBarrier;
     imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
     imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
