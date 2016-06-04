@@ -840,7 +840,7 @@ int main(int argc, char* argv[])
   VkCommandBufferBeginInfo commandBufferBeginInfo = {};
   commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
   commandBufferBeginInfo.pNext = NULL;
-  commandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+  commandBufferBeginInfo.flags = 0;
   commandBufferBeginInfo.pInheritanceInfo = NULL;
   res = vkBeginCommandBuffer(commandBuffers[0], &commandBufferBeginInfo);
   if (res != VK_SUCCESS) {
@@ -1707,20 +1707,6 @@ int main(int argc, char* argv[])
     submitInfo[0].pSignalSemaphores = NULL;
 
     //Queue the command buffer for execution
-    res = vkQueueSubmit(queue, 1, submitInfo, VK_NULL_HANDLE);
-    if (res != VK_SUCCESS) {
-      printf ("vkQueueSubmit returned error %d.\n", res);
-      return -1;
-    }  
-
-    submitInfo[0].waitSemaphoreCount = 0;
-
-    res = vkQueueSubmit(queue, 1, submitInfo, VK_NULL_HANDLE);
-    if (res != VK_SUCCESS) {
-      printf ("vkQueueSubmit returned error %d.\n", res);
-      return -1;
-    }
-
     res = vkQueueSubmit(queue, 1, submitInfo, drawFence);
     if (res != VK_SUCCESS) {
       printf ("vkQueueSubmit returned error %d.\n", res);

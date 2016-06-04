@@ -969,11 +969,11 @@ int main(int argc, char* argv[])
   //Setup the pipeline
   VkDescriptorSetLayoutBinding layout_bindings[2];
   layout_bindings[0].binding = 0;
-  layout_bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  layout_bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
   layout_bindings[0].descriptorCount = 1;
   layout_bindings[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
   layout_bindings[0].pImmutableSamplers = NULL;
-  layout_bindings[1].binding = 1;
+  layout_bindings[1].binding = 0;
   layout_bindings[1].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
   layout_bindings[1].descriptorCount = 1;
   layout_bindings[1].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
@@ -983,24 +983,32 @@ int main(int argc, char* argv[])
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo;
   descriptorSetLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
   descriptorSetLayoutCreateInfo.pNext = NULL;
-  descriptorSetLayoutCreateInfo.bindingCount = 2;
+  descriptorSetLayoutCreateInfo.bindingCount = 1;
   descriptorSetLayoutCreateInfo.pBindings = layout_bindings;
     
-  VkDescriptorSetLayout descriptorSetLayout;
-  res = vkCreateDescriptorSetLayout(device, &descriptorSetLayoutCreateInfo, NULL, &descriptorSetLayout);
+  VkDescriptorSetLayout modelDescriptorSetLayout;
+  VkDescriptorSetLayout sceneDescriptorSetLayout;
+  res = vkCreateDescriptorSetLayout(device, &descriptorSetLayoutCreateInfo, NULL, &modelDescriptorSetLayout);
+  if (res != VK_SUCCESS) {
+    printf ("vkCreateDescriptorSetLayout returned error.\n");
+    return -1;
+  }
+  descriptorSetLayoutCreateInfo.pBindings = &layout_bindings[1];
+  res = vkCreateDescriptorSetLayout(device, &descriptorSetLayoutCreateInfo, NULL, &sceneDescriptorSetLayout);
   if (res != VK_SUCCESS) {
     printf ("vkCreateDescriptorSetLayout returned error.\n");
     return -1;
   }
   
+  VkDescriptorSetLayout layouts[2] = {modelDescriptorSetLayout, sceneDescriptorSetLayout};
   //Now use the descriptor layout to create a pipeline layout 
   VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo;
   pPipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
   pPipelineLayoutCreateInfo.pNext = NULL;
   pPipelineLayoutCreateInfo.pushConstantRangeCount = 0;
   pPipelineLayoutCreateInfo.pPushConstantRanges = NULL;
-  pPipelineLayoutCreateInfo.setLayoutCount = 1;
-  pPipelineLayoutCreateInfo.pSetLayouts = &descriptorSetLayout;
+  pPipelineLayoutCreateInfo.setLayoutCount = 2;
+  pPipelineLayoutCreateInfo.pSetLayouts = layouts;
 
   VkPipelineLayout pipelineLayout;
 
@@ -1012,9 +1020,9 @@ int main(int argc, char* argv[])
 
   //load shaders    
   size_t vertexShaderSize=0;
-  char *vertexShader = readBinaryFile("shaders/uniforms/vert.spv", &vertexShaderSize);
+  char *vertexShader = readBinaryFile("shaders/dynamicOffset/vert.spv", &vertexShaderSize);
   size_t fragmentShaderSize=0;
-  char *fragmentShader = readBinaryFile("shaders/uniforms/frag.spv", &fragmentShaderSize);
+  char *fragmentShader = readBinaryFile("shaders/dynamicOffset/frag.spv", &fragmentShaderSize);
   if (vertexShaderSize==0 || fragmentShaderSize==0){
     printf ("Colud not load shader file.\n");
     return -1;
@@ -1189,27 +1197,25 @@ int main(int argc, char* argv[])
   uniformBufferInfo[0].range = sizeof(struct modelBufferVals);
   
   uniformBufferInfo[1].buffer = uniformBuffer;
-  uniformBufferInfo[1].offset = modelBufferValsOffset*2;
-  uniformBufferInfo[1].range = sizeof(struct sceneBufferVals);
+  uniformBufferInfo[1].offset = modelBufferValsOffset;
+  uniformBufferInfo[1].range = sizeof(struct modelBufferVals);
   
   uniformBufferInfo[2].buffer = uniformBuffer;
-  uniformBufferInfo[2].offset = modelBufferValsOffset;
-  uniformBufferInfo[2].range = sizeof(struct modelBufferVals);
-  
-  uniformBufferInfo[3].buffer = uniformBuffer;
-  uniformBufferInfo[3].offset = modelBufferValsOffset*2;
-  uniformBufferInfo[3].range = sizeof(struct sceneBufferVals);
+  uniformBufferInfo[2].offset = modelBufferValsOffset*2;
+  uniformBufferInfo[2].range = sizeof(struct sceneBufferVals);
   
   //Create a descriptor pool
-  VkDescriptorPoolSize typeCounts[1];
+  VkDescriptorPoolSize typeCounts[2];
   typeCounts[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
   typeCounts[0].descriptorCount = 4;
+  typeCounts[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+  typeCounts[1].descriptorCount = 2;
 
   VkDescriptorPoolCreateInfo descriptorPoolInfo;
   descriptorPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
   descriptorPoolInfo.pNext = NULL;
-  descriptorPoolInfo.maxSets = 2;
-  descriptorPoolInfo.poolSizeCount = 1;
+  descriptorPoolInfo.maxSets = 3;
+  descriptorPoolInfo.poolSizeCount = 2;
   descriptorPoolInfo.pPoolSizes = typeCounts;
 
   VkDescriptorPool descriptorPool;
@@ -1301,7 +1307,7 @@ int main(int argc, char* argv[])
   vertexInputAttributeDescription[1].format = VK_FORMAT_R32G32B32A32_SFLOAT;
   vertexInputAttributeDescription[1].offset = 16;
 
-  VkDescriptorSetLayout descriptorSetLayouts[] = {descriptorSetLayout, descriptorSetLayout};
+  VkDescriptorSetLayout descriptorSetLayouts[] = {modelDescriptorSetLayout, modelDescriptorSetLayout, sceneDescriptorSetLayout};
   //Create a descriptor set
   VkDescriptorSetAllocateInfo descriptorSetAllocateInfo;
   descriptorSetAllocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -1322,36 +1328,20 @@ int main(int argc, char* argv[])
   writes[0].pNext = NULL;
   writes[0].dstSet = descriptorSets[0];
   writes[0].descriptorCount = 1;
-  writes[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  writes[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
   writes[0].pBufferInfo = &uniformBufferInfo[0];
   writes[0].dstArrayElement = 0;
   writes[0].dstBinding = 0;
   writes[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
   writes[1].pNext = NULL;
-  writes[1].dstSet = descriptorSets[0];
+  writes[1].dstSet = descriptorSets[1];
   writes[1].descriptorCount = 1;
   writes[1].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  writes[1].pBufferInfo = &uniformBufferInfo[1];
+  writes[1].pBufferInfo = &uniformBufferInfo[2];
   writes[1].dstArrayElement = 0;
-  writes[1].dstBinding = 1;
-  writes[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-  writes[2].pNext = NULL;
-  writes[2].dstSet = descriptorSets[1];
-  writes[2].descriptorCount = 1;
-  writes[2].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  writes[2].pBufferInfo = &uniformBufferInfo[2];
-  writes[2].dstArrayElement = 0;
-  writes[2].dstBinding = 0;
-  writes[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-  writes[3].pNext = NULL;
-  writes[3].dstSet = descriptorSets[1];
-  writes[3].descriptorCount = 1;
-  writes[3].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  writes[3].pBufferInfo = &uniformBufferInfo[3];
-  writes[3].dstArrayElement = 0;
-  writes[3].dstBinding = 1;
+  writes[1].dstBinding = 0;
 
-  vkUpdateDescriptorSets(device, 4, writes, 0, NULL);
+  vkUpdateDescriptorSets(device, 2, writes, 0, NULL);
     /*
   //Create a pipeline cache
   VkPipelineCache pipelineCache;
@@ -1647,15 +1637,22 @@ int main(int argc, char* argv[])
     vkCmdSetViewport(commandBuffers[1], 0, 1, &viewport);
     vkCmdSetScissor(commandBuffers[1], 0, 1, &scissor);
     
-    VkDeviceSize offsets[1] = {0};
-    vkCmdBindVertexBuffers(commandBuffers[1], 0, 1, &vertexBuffer, offsets);
+    VkDeviceSize vertexOffsets[1] = {0};
+    vkCmdBindVertexBuffers(commandBuffers[1], 0, 1, &vertexBuffer, vertexOffsets);
+
+    vkCmdBindDescriptorSets(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS,
+                  pipelineLayout, 1, 1,
+                  &descriptorSets[1], 0, NULL);
+    uint32_t destcriptorOffset = 0;
     vkCmdBindDescriptorSets(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS,
                   pipelineLayout, 0, 1,
-                  descriptorSets, 0, NULL);
+                  &descriptorSets[0], 1, &destcriptorOffset);
     vkCmdDraw(commandBuffers[1], 12 * 3, 1, 0, 0);
+
+    destcriptorOffset = modelBufferValsOffset;
     vkCmdBindDescriptorSets(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS,
                   pipelineLayout, 0, 1,
-                  descriptorSets, 0, NULL);
+                  &descriptorSets[0], 1, &destcriptorOffset);
     vkCmdDraw(commandBuffers[1], 12 * 3, 1, 0, 0);
     
     vkCmdEndRenderPass(commandBuffers[1]);
