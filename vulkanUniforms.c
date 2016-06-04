@@ -840,7 +840,7 @@ int main(int argc, char* argv[])
   VkCommandBufferBeginInfo commandBufferBeginInfo = {};
   commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
   commandBufferBeginInfo.pNext = NULL;
-  commandBufferBeginInfo.flags = 0;
+  commandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
   commandBufferBeginInfo.pInheritanceInfo = NULL;
   res = vkBeginCommandBuffer(commandBuffers[0], &commandBufferBeginInfo);
   if (res != VK_SUCCESS) {
@@ -1516,15 +1516,6 @@ int main(int argc, char* argv[])
     
   //The main event loop
   while (1==1) {
-
-    //This semaphore will be signalled after the next image is acquired. The first command buffer will wait until this happens before starting the render pass.
-    vkDestroySemaphore(device, presentCompleteSemaphore, NULL);
-    res = vkCreateSemaphore(device, &presentCompleteSemaphoreCreateInfo, NULL,
-			      &presentCompleteSemaphore);
-    if (res != VK_SUCCESS) {
-      printf ("vkCreateSemaphore returned error %d.\n", res);
-      return -1;
-    }    
     //Acquire the next image in the swapchain
     res = vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, presentCompleteSemaphore, NULL, &currentBuffer);
     if (!(res == VK_SUCCESS || res == VK_ERROR_OUT_OF_DATE_KHR)) {
@@ -1716,11 +1707,25 @@ int main(int argc, char* argv[])
     submitInfo[0].pSignalSemaphores = NULL;
 
     //Queue the command buffer for execution
-    res = vkQueueSubmit(queue, 1, submitInfo, drawFence);
+    res = vkQueueSubmit(queue, 1, submitInfo, VK_NULL_HANDLE);
     if (res != VK_SUCCESS) {
       printf ("vkQueueSubmit returned error %d.\n", res);
       return -1;
     }  
+
+    submitInfo[0].waitSemaphoreCount = 0;
+
+    res = vkQueueSubmit(queue, 1, submitInfo, VK_NULL_HANDLE);
+    if (res != VK_SUCCESS) {
+      printf ("vkQueueSubmit returned error %d.\n", res);
+      return -1;
+    }
+
+    res = vkQueueSubmit(queue, 1, submitInfo, drawFence);
+    if (res != VK_SUCCESS) {
+      printf ("vkQueueSubmit returned error %d.\n", res);
+      return -1;
+    }
     
     //This waits for the queue to finish (this also involves waiting for vsync as the first buffer in this queue will wait on the presntcomplete semaphore to be singled by vkAcquireNextImageKHR before starting).
     int timeoutCount = 0;

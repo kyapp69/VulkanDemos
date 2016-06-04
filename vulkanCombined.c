@@ -1395,21 +1395,7 @@ int main(int argc, char* argv[])
     //printf ("Starting frame %d.\n", frame);
     
     uint32_t currentBuffer;
- 
-    vkDestroySemaphore(device, presentCompleteSemaphore, NULL);  
-    
-    //Do some rendering:  
-    presentCompleteSemaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-    presentCompleteSemaphoreCreateInfo.pNext = NULL;
-    presentCompleteSemaphoreCreateInfo.flags = 0;
-    
-    res = vkCreateSemaphore(device, &presentCompleteSemaphoreCreateInfo, NULL,
-			      &presentCompleteSemaphore);
-    if (res != VK_SUCCESS) {
-      printf ("vkCreateSemaphore returned error %d.\n", res);
-      return -1;
-    }
-    
+
     // Get next image in the swap chain (back/front buffer)
     res = vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, presentCompleteSemaphore, NULL, &currentBuffer);
     if (res != VK_SUCCESS) {

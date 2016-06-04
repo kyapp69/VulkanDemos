@@ -22,48 +22,48 @@ struct Vertex{
 
 #define XYZ1(_x_, _y_, _z_) (_x_), (_y_), (_z_), 1.f
 
-static const struct Vertex vertexData[] = {
- {XYZ1(-1, -1, -1), XYZ1(1.f, 0.f, 0.f)},
+static const struct Vertex vetrexData[] = {
+    {XYZ1(-1, -1, -1), XYZ1(0.f, 0.f, 0.f)},
     {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f)},
-    {XYZ1(-1, 1, -1), XYZ1(1.f, 0.f, 0.f)},
-    {XYZ1(-1, 1, -1), XYZ1(1.f, 0.f, 0.f)},
+    {XYZ1(-1, 1, -1), XYZ1(0.f, 1.f, 0.f)},
+    {XYZ1(-1, 1, -1), XYZ1(0.f, 1.f, 0.f)},
     {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f)},
-    {XYZ1(1, 1, -1), XYZ1(1.f, 0.f, 0.f)},
+    {XYZ1(1, 1, -1), XYZ1(1.f, 1.f, 0.f)},
 
-    {XYZ1(-1, -1, 1), XYZ1(0.f, 1.f, 0.f)},
-    {XYZ1(-1, 1, 1), XYZ1(0.f, 1.f, 0.f)},
-    {XYZ1(1, -1, 1), XYZ1(0.f, 1.f, 0.f)},
-    {XYZ1(1, -1, 1), XYZ1(0.f, 1.f, 0.f)},
-    {XYZ1(-1, 1, 1), XYZ1(0.f, 1.f, 0.f)},
-    {XYZ1(1, 1, 1), XYZ1(0.f, 1.f, 0.f)},
+    {XYZ1(-1, -1, 1), XYZ1(0.f, 0.f, 1.f)},
+    {XYZ1(-1, 1, 1), XYZ1(0.f, 1.f, 1.f)},
+    {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f)},
+    {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f)},
+    {XYZ1(-1, 1, 1), XYZ1(0.f, 1.f, 1.f)},
+    {XYZ1(1, 1, 1), XYZ1(1.f, 1.f, 1.f)},
 
-    {XYZ1(1, 1, 1), XYZ1(0.f, 0.f, 1.f)},
-    {XYZ1(1, 1, -1), XYZ1(0.f, 0.f, 1.f)},
-    {XYZ1(1, -1, 1), XYZ1(0.f, 0.f, 1.f)},
-    {XYZ1(1, -1, 1), XYZ1(0.f, 0.f, 1.f)},
-    {XYZ1(1, 1, -1), XYZ1(0.f, 0.f, 1.f)},
-    {XYZ1(1, -1, -1), XYZ1(0.f, 0.f, 1.f)},
+    {XYZ1(1, 1, 1), XYZ1(1.f, 1.f, 1.f)},
+    {XYZ1(1, 1, -1), XYZ1(1.f, 1.f, 0.f)},
+    {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f)},
+    {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f)},
+    {XYZ1(1, 1, -1), XYZ1(1.f, 1.f, 0.f)},
+    {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f)},
 
-    {XYZ1(-1, 1, 1), XYZ1(1.f, 1.f, 0.f)},
-    {XYZ1(-1, -1, 1), XYZ1(1.f, 1.f, 0.f)},
-    {XYZ1(-1, 1, -1), XYZ1(1.f, 1.f, 0.f)},
-    {XYZ1(-1, 1, -1), XYZ1(1.f, 1.f, 0.f)},
-    {XYZ1(-1, -1, 1), XYZ1(1.f, 1.f, 0.f)},
-    {XYZ1(-1, -1, -1), XYZ1(1.f, 1.f, 0.f)},
+    {XYZ1(-1, 1, 1), XYZ1(0.f, 1.f, 1.f)},
+    {XYZ1(-1, -1, 1), XYZ1(0.f, 0.f, 1.f)},
+    {XYZ1(-1, 1, -1), XYZ1(0.f, 1.f, 0.f)},
+    {XYZ1(-1, 1, -1), XYZ1(0.f, 1.f, 0.f)},
+    {XYZ1(-1, -1, 1), XYZ1(0.f, 0.f, 1.f)},
+    {XYZ1(-1, -1, -1), XYZ1(0.f, 0.f, 0.f)},
 
-    {XYZ1(1, 1, 1), XYZ1(1.f, 0.f, 1.f)},
-    {XYZ1(-1, 1, 1), XYZ1(1.f, 0.f, 1.f)},
-    {XYZ1(1, 1, -1), XYZ1(1.f, 0.f, 1.f)},
-    {XYZ1(1, 1, -1), XYZ1(1.f, 0.f, 1.f)},
-    {XYZ1(-1, 1, 1), XYZ1(1.f, 0.f, 1.f)},
-    {XYZ1(-1, 1, -1), XYZ1(1.f, 0.f, 1.f)},
+    {XYZ1(1, 1, 1), XYZ1(1.f, 1.f, 1.f)},
+    {XYZ1(-1, 1, 1), XYZ1(0.f, 1.f, 1.f)},
+    {XYZ1(1, 1, -1), XYZ1(1.f, 1.f, 0.f)},
+    {XYZ1(1, 1, -1), XYZ1(1.f, 1.f, 0.f)},
+    {XYZ1(-1, 1, 1), XYZ1(0.f, 1.f, 1.f)},
+    {XYZ1(-1, 1, -1), XYZ1(0.f, 1.f, 0.f)},
 
-    {XYZ1(1, -1, 1), XYZ1(0.f, 1.f, 1.f)},
-    {XYZ1(1, -1, -1), XYZ1(0.f, 1.f, 1.f)},
-    {XYZ1(-1, -1, 1), XYZ1(0.f, 1.f, 1.f)},
-    {XYZ1(-1, -1, 1), XYZ1(0.f, 1.f, 1.f)},
-    {XYZ1(1, -1, -1), XYZ1(0.f, 1.f, 1.f)},
-    {XYZ1(-1, -1, -1), XYZ1(0.f, 1.f, 1.f)},
+    {XYZ1(1, -1, 1), XYZ1(1.f, 0.f, 1.f)},
+    {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f)},
+    {XYZ1(-1, -1, 1), XYZ1(0.f, 0.f, 1.f)},
+    {XYZ1(-1, -1, 1), XYZ1(0.f, 0.f, 1.f)},
+    {XYZ1(1, -1, -1), XYZ1(1.f, 0.f, 0.f)},
+    {XYZ1(-1, -1, -1), XYZ1(0.f, 0.f, 0.f)},
 };
 
 //Load binary file into a buffer
@@ -584,6 +584,15 @@ int resizeBuffers(VkCommandBuffer setupBuffer, VkQueue queue, VkPhysicalDevice *
   }    
 }
 
+struct modelBufferVals {
+    float mv[16];
+};
+
+struct sceneBufferVals {
+    float lightDirection[4];
+    float projection[16];
+};
+
 int main(int argc, char* argv[])
 {
   //Initialize the VkApplicationInfo structure
@@ -958,18 +967,23 @@ int main(int argc, char* argv[])
   }    
   
   //Setup the pipeline
-  VkDescriptorSetLayoutBinding layout_bindings[1];
+  VkDescriptorSetLayoutBinding layout_bindings[2];
   layout_bindings[0].binding = 0;
   layout_bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
   layout_bindings[0].descriptorCount = 1;
   layout_bindings[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
   layout_bindings[0].pImmutableSamplers = NULL;
+  layout_bindings[1].binding = 1;
+  layout_bindings[1].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  layout_bindings[1].descriptorCount = 1;
+  layout_bindings[1].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+  layout_bindings[1].pImmutableSamplers = NULL;
   
   //Next take layout bindings and use them to create a descriptor set layout
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo;
   descriptorSetLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
   descriptorSetLayoutCreateInfo.pNext = NULL;
-  descriptorSetLayoutCreateInfo.bindingCount = 1;
+  descriptorSetLayoutCreateInfo.bindingCount = 2;
   descriptorSetLayoutCreateInfo.pBindings = layout_bindings;
     
   VkDescriptorSetLayout descriptorSetLayout;
@@ -983,7 +997,7 @@ int main(int argc, char* argv[])
   VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo;
   pPipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
   pPipelineLayoutCreateInfo.pNext = NULL;
-  pPipelineLayoutCreateInfo.pushConstantRangeCount = 0;		
+  pPipelineLayoutCreateInfo.pushConstantRangeCount = 0;
   pPipelineLayoutCreateInfo.pPushConstantRanges = NULL;
   pPipelineLayoutCreateInfo.setLayoutCount = 1;
   pPipelineLayoutCreateInfo.pSetLayouts = &descriptorSetLayout;
@@ -998,9 +1012,9 @@ int main(int argc, char* argv[])
 
   //load shaders    
   size_t vertexShaderSize=0;
-  char *vertexShader = readBinaryFile("shaders/dt/vert.spv", &vertexShaderSize);
+  char *vertexShader = readBinaryFile("shaders/uniforms/vert.spv", &vertexShaderSize);
   size_t fragmentShaderSize=0;
-  char *fragmentShader = readBinaryFile("shaders/dt/frag.spv", &fragmentShaderSize);
+  char *fragmentShader = readBinaryFile("shaders/uniforms/frag.spv", &fragmentShaderSize);
   if (vertexShaderSize==0 || fragmentShaderSize==0){
     printf ("Colud not load shader file.\n");
     return -1;
@@ -1050,34 +1064,28 @@ int main(int argc, char* argv[])
   if (initFrameBuffers(device, renderPass, swapchainImageCount, swapChainViews, depthView, &framebuffers)<0)
     return -1;
   
-  //Create the uniforms
-  float projectionMatrix[16];
-  float viewMatrix[16];
-  float modelMatrix[16]={1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};    
-  float correctionMatrix[16]={1,0,0,0, 0,-1,0,0, 0,0,0.5,0, 0,0,0.5,1};  
-  float MVMatrix[16];
-  float MVPMatrix[16];
-  
-  perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 4.0f, 6.0f, projectionMatrix);
-  multiply_matrix(correctionMatrix, projectionMatrix, projectionMatrix);
-  translate_matrix(0,0,-5, viewMatrix);
-  rotate_matrix(0, 0,1,0, modelMatrix);
-  multiply_matrix(viewMatrix, modelMatrix, MVMatrix);
-  multiply_matrix(projectionMatrix, MVMatrix, MVPMatrix);
-  /*
-  ("viewMatrix\n");
-  print_matrix(viewMatrix);
-  printf("projectionMatrix\n");
-  print_matrix(projectionMatrix);
-  printf("MVPMatrix\n");
-  print_matrix(MVPMatrix);
-  */
+  VkPhysicalDeviceProperties deviceProperties;
+  vkGetPhysicalDeviceProperties(physicalDevices[0], &deviceProperties);
+  if (res != VK_SUCCESS) {
+    printf ("vkGetPhysicalDeviceProperties returned error %d.\n", res);
+    return -1;
+  }  
+  printf ("minUniformBufferOffsetAlignment %d.\n",deviceProperties.limits.minUniformBufferOffsetAlignment);
+  printf ("sizeof(struct modelBufferVals) %d.\n", sizeof(struct modelBufferVals));
+  printf ("sizeof(struct sceneBufferVals) %d.\n", sizeof(struct sceneBufferVals));
+  uint modelBufferValsOffset = sizeof(struct modelBufferVals);
+  uint sceneBufferValsOffset = sizeof(struct sceneBufferVals);
+  if (modelBufferValsOffset < deviceProperties.limits.minUniformBufferOffsetAlignment)
+	  modelBufferValsOffset = deviceProperties.limits.minUniformBufferOffsetAlignment;
+  if (sceneBufferValsOffset < deviceProperties.limits.minUniformBufferOffsetAlignment)
+	  sceneBufferValsOffset = deviceProperties.limits.minUniformBufferOffsetAlignment;
+  printf ("VkBufferCreateInfo size: %d.\n", modelBufferValsOffset*2+sceneBufferValsOffset);
 
   VkBufferCreateInfo uniformBufferCreateInfo;
   uniformBufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
   uniformBufferCreateInfo.pNext = NULL;
   uniformBufferCreateInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-  uniformBufferCreateInfo.size = sizeof(MVPMatrix);
+  uniformBufferCreateInfo.size = modelBufferValsOffset*2+sceneBufferValsOffset;
   uniformBufferCreateInfo.queueFamilyIndexCount = 0;
   uniformBufferCreateInfo.pQueueFamilyIndices = NULL;
   uniformBufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
@@ -1095,7 +1103,7 @@ int main(int argc, char* argv[])
   
   uint32_t typeBits = memoryRequirements.memoryTypeBits;  
   uint32_t typeIndex;
-  VkFlags requirements_mask = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;// | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+  VkFlags requirements_mask = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
   for (typeIndex = 0; typeIndex < physicalDeviceMemoryProperties.memoryTypeCount; typeIndex++) {
     if ((typeBits & 1) == 1)//Check last bit;
     {
@@ -1135,9 +1143,39 @@ int main(int argc, char* argv[])
     return -1;
   }
    
-  memcpy(uniformMappedMemory, MVPMatrix, sizeof(MVPMatrix));
+     //Create the uniforms
+  float viewMatrix[16];
+  float modelMatrix[16]={1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};  
+  float modelMatrix2[16]={1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
+  
+  struct modelBufferVals *modelBufferVals1 = (struct modelBufferVals*)uniformMappedMemory;
+  struct modelBufferVals *modelBufferVals2 = (struct modelBufferVals*)((void*)uniformMappedMemory + modelBufferValsOffset);
+  struct sceneBufferVals *sceneBufferValsp = (struct sceneBufferVals*)((void*)uniformMappedMemory + (modelBufferValsOffset*2));
+  
+  perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 0.1f, 100.0f, sceneBufferValsp->projection);
 
-  //vkUnmapMemory(device, uniformMemory);
+  translate_matrix(0,0,-5, viewMatrix);
+  rotate_matrix(45, 0,1,0, modelMatrix);
+  multiply_matrix(viewMatrix, modelMatrix, modelBufferVals1->mv);
+
+  rotate_matrix(0, 0,1,0, modelMatrix2);
+  multiply_matrix(viewMatrix, modelMatrix2, modelBufferVals2->mv);
+  
+  /*
+  ("viewMatrix\n");
+  print_matrix(viewMatrix);
+  printf("projectionMatrix\n");
+  print_matrix(projectionMatrix);
+  printf("MVPMatrix\n");
+  print_matrix(MVPMatrix);
+  */
+//  VkMappedMemoryRange flushrange;
+//  flushrange.memory=uniformMemory;
+//  flushrange.offset=0;
+//  flushrange.size=memoryRequirements.size;
+//  vkFlushMappedMemoryRanges(device, 1, &flushrange);
+
+//   //vkUnmapMemory(device, uniformMemory);
 
   res = vkBindBufferMemory(device, uniformBuffer, uniformMemory, 0);
   if (res != VK_SUCCESS) {
@@ -1145,20 +1183,32 @@ int main(int argc, char* argv[])
     return -1;
   }
   
-  VkDescriptorBufferInfo uniformBufferInfo;
-  uniformBufferInfo.buffer = uniformBuffer;
-  uniformBufferInfo.offset = 0;
-  uniformBufferInfo.range = sizeof(MVPMatrix);
+  VkDescriptorBufferInfo uniformBufferInfo[4];
+  uniformBufferInfo[0].buffer = uniformBuffer;
+  uniformBufferInfo[0].offset = 0;
+  uniformBufferInfo[0].range = sizeof(struct modelBufferVals);
+  
+  uniformBufferInfo[1].buffer = uniformBuffer;
+  uniformBufferInfo[1].offset = modelBufferValsOffset*2;
+  uniformBufferInfo[1].range = sizeof(struct sceneBufferVals);
+  
+  uniformBufferInfo[2].buffer = uniformBuffer;
+  uniformBufferInfo[2].offset = modelBufferValsOffset;
+  uniformBufferInfo[2].range = sizeof(struct modelBufferVals);
+  
+  uniformBufferInfo[3].buffer = uniformBuffer;
+  uniformBufferInfo[3].offset = modelBufferValsOffset*2;
+  uniformBufferInfo[3].range = sizeof(struct sceneBufferVals);
   
   //Create a descriptor pool
   VkDescriptorPoolSize typeCounts[1];
   typeCounts[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  typeCounts[0].descriptorCount = 1;
+  typeCounts[0].descriptorCount = 4;
 
   VkDescriptorPoolCreateInfo descriptorPoolInfo;
   descriptorPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
   descriptorPoolInfo.pNext = NULL;
-  descriptorPoolInfo.maxSets = 1;
+  descriptorPoolInfo.maxSets = 2;
   descriptorPoolInfo.poolSizeCount = 1;
   descriptorPoolInfo.pPoolSizes = typeCounts;
 
@@ -1174,7 +1224,7 @@ int main(int argc, char* argv[])
   vertexBufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
   vertexBufferCreateInfo.pNext = NULL;
   vertexBufferCreateInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-  vertexBufferCreateInfo.size = sizeof(vertexData);
+  vertexBufferCreateInfo.size = sizeof(vetrexData);
   vertexBufferCreateInfo.queueFamilyIndexCount = 0;
   vertexBufferCreateInfo.pQueueFamilyIndices = NULL;
   vertexBufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
@@ -1183,7 +1233,7 @@ int main(int argc, char* argv[])
   VkBuffer vertexBuffer;
   res = vkCreateBuffer(device, &vertexBufferCreateInfo, NULL, &vertexBuffer);
   if (res != VK_SUCCESS) {
-    printf ("vkCreateDescriptorPool returned error %d.\n", res);
+    printf ("vkCreateBuffer returned error %d.\n", res);
     return -1;
   }
   
@@ -1227,7 +1277,7 @@ int main(int argc, char* argv[])
     return -1;
   }
   
-  memcpy(vertexMappedMemory, vertexData, sizeof(vertexData));
+  memcpy(vertexMappedMemory, vetrexData, sizeof(vetrexData));
 
   vkUnmapMemory(device, vertexMemory);
 
@@ -1239,7 +1289,7 @@ int main(int argc, char* argv[])
   VkVertexInputBindingDescription vertexInputBindingDescription;
   vertexInputBindingDescription.binding = 0;
   vertexInputBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-  vertexInputBindingDescription.stride = sizeof(vertexData[0]);
+  vertexInputBindingDescription.stride = sizeof(vetrexData[0]);
 
   VkVertexInputAttributeDescription vertexInputAttributeDescription[2];
   vertexInputAttributeDescription[0].binding = 0;
@@ -1251,32 +1301,57 @@ int main(int argc, char* argv[])
   vertexInputAttributeDescription[1].format = VK_FORMAT_R32G32B32A32_SFLOAT;
   vertexInputAttributeDescription[1].offset = 16;
 
+  VkDescriptorSetLayout descriptorSetLayouts[] = {descriptorSetLayout, descriptorSetLayout};
   //Create a descriptor set
   VkDescriptorSetAllocateInfo descriptorSetAllocateInfo;
   descriptorSetAllocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
   descriptorSetAllocateInfo.pNext = NULL;
   descriptorSetAllocateInfo.descriptorPool = descriptorPool;
-  descriptorSetAllocateInfo.descriptorSetCount = 1;
-  descriptorSetAllocateInfo.pSetLayouts = &descriptorSetLayout;
+  descriptorSetAllocateInfo.descriptorSetCount = 2;
+  descriptorSetAllocateInfo.pSetLayouts = descriptorSetLayouts;
 
-  //return 0;
-  VkDescriptorSet descriptorSets[1];
+  VkDescriptorSet descriptorSets[2];
   res = vkAllocateDescriptorSets(device, &descriptorSetAllocateInfo, descriptorSets);
   if (res != VK_SUCCESS) {
     printf ("vkAllocateDescriptorSets returned error %d.\n", res);
     return -1;
   }
-  VkWriteDescriptorSet writes[1];
+  //return 0;
+  VkWriteDescriptorSet writes[4];
   writes[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
   writes[0].pNext = NULL;
   writes[0].dstSet = descriptorSets[0];
   writes[0].descriptorCount = 1;
   writes[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  writes[0].pBufferInfo = &uniformBufferInfo;
+  writes[0].pBufferInfo = &uniformBufferInfo[0];
   writes[0].dstArrayElement = 0;
   writes[0].dstBinding = 0;
+  writes[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+  writes[1].pNext = NULL;
+  writes[1].dstSet = descriptorSets[0];
+  writes[1].descriptorCount = 1;
+  writes[1].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  writes[1].pBufferInfo = &uniformBufferInfo[1];
+  writes[1].dstArrayElement = 0;
+  writes[1].dstBinding = 1;
+  writes[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+  writes[2].pNext = NULL;
+  writes[2].dstSet = descriptorSets[1];
+  writes[2].descriptorCount = 1;
+  writes[2].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  writes[2].pBufferInfo = &uniformBufferInfo[2];
+  writes[2].dstArrayElement = 0;
+  writes[2].dstBinding = 0;
+  writes[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+  writes[3].pNext = NULL;
+  writes[3].dstSet = descriptorSets[1];
+  writes[3].descriptorCount = 1;
+  writes[3].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  writes[3].pBufferInfo = &uniformBufferInfo[3];
+  writes[3].dstArrayElement = 0;
+  writes[3].dstBinding = 1;
 
-  vkUpdateDescriptorSets(device, 1, writes, 0, NULL); 
+  vkUpdateDescriptorSets(device, 4, writes, 0, NULL);
     /*
   //Create a pipeline cache
   VkPipelineCache pipelineCache;
@@ -1323,9 +1398,9 @@ int main(int argc, char* argv[])
   rs.pNext = NULL;
   rs.flags = 0;
   rs.polygonMode = VK_POLYGON_MODE_FILL;
-  rs.cullMode = VK_CULL_MODE_NONE;//VK_CULL_MODE_BACK_BIT;//
+  rs.cullMode = VK_CULL_MODE_BACK_BIT;
   rs.frontFace = VK_FRONT_FACE_CLOCKWISE;
-  rs.depthClampEnable = VK_FALSE;
+  rs.depthClampEnable = VK_TRUE;
   rs.rasterizerDiscardEnable = VK_FALSE;
   rs.depthBiasEnable = VK_FALSE;
   rs.depthBiasConstantFactor = 0;
@@ -1373,7 +1448,7 @@ int main(int argc, char* argv[])
   ds.depthTestEnable = VK_TRUE;
   ds.depthWriteEnable = VK_TRUE;
   ds.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
-  ds.depthBoundsTestEnable = VK_TRUE;
+  ds.depthBoundsTestEnable = VK_FALSE;
   ds.stencilTestEnable = VK_FALSE;
   ds.back.failOp = VK_STENCIL_OP_KEEP;
   ds.back.passOp = VK_STENCIL_OP_KEEP;
@@ -1383,7 +1458,7 @@ int main(int argc, char* argv[])
   ds.back.depthFailOp = VK_STENCIL_OP_KEEP;
   ds.back.writeMask = 0;
   ds.minDepthBounds = 0;
-  ds.maxDepthBounds = 1;
+  ds.maxDepthBounds = 0;
   ds.stencilTestEnable = VK_FALSE;
   ds.front = ds.back;
 
@@ -1436,9 +1511,19 @@ int main(int argc, char* argv[])
   
   uint32_t frame=0;
   int done = 0;
+  int newSwapchainRequired = 0;
+  uint32_t currentBuffer;
     
   //The main event loop
-  while (!(done==1)) {
+  while (1==1) {
+    //Acquire the next image in the swapchain
+    res = vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, presentCompleteSemaphore, NULL, &currentBuffer);
+    if (!(res == VK_SUCCESS || res == VK_ERROR_OUT_OF_DATE_KHR)) {
+      printf ("vkAcquireNextImageKHR returned error.\n");
+      return -1;
+    }else if (res == VK_ERROR_OUT_OF_DATE_KHR)
+      newSwapchainRequired=1;
+
     while (1==1) {
       e = xcb_poll_for_event(connection);
       if (!e) break;
@@ -1449,55 +1534,60 @@ int main(int argc, char* argv[])
         case XCB_EVENT_MASK_BUTTON_PRESS:
            //done=1;
            break;
-	case XCB_KEY_PRESS:	  
-	  done=1;
-           break;	   
-	case XCB_CONFIGURE_NOTIFY:;
-	  const xcb_configure_notify_event_t *cfg = (const xcb_configure_notify_event_t *)e;
-	  if ((width != cfg->width) || (height != cfg->height)) {
-            width = cfg->width;
-            height = cfg->height;
-	  //Delete the existing framebuffers:
-	  for (i = 0; i < swapchainImageCount; i++)
-	    vkDestroyFramebuffer(device, framebuffers[i], 0);
-	  free(framebuffers);
-	  //Rebuild the swapchain:
-	  if (resizeBuffers(commandBuffers[0], queue, physicalDevices, device, surface, &swapchain, &format, &swapChainImages, &swapChainViews, &swapchainImageCount, depth_format, &depthImage, &depthView, &depthMemory)<0)
-	    return -1;
-	  //Create new framebuffers:
- 	  if (initFrameBuffers(device, renderPass, swapchainImageCount, swapChainViews, depthView, &framebuffers)<0)
-	    return -1;
-	    perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 4.0f, 6.0f, projectionMatrix);
-	    multiply_matrix(correctionMatrix, projectionMatrix, projectionMatrix);
-	  }
+	      case XCB_KEY_PRESS:	  
+	        done=1;
+                 break;	   
+	      case XCB_CONFIGURE_NOTIFY:;
+	        const xcb_configure_notify_event_t *cfg = (const xcb_configure_notify_event_t *)e;
+            if ((width != cfg->width) || (height != cfg->height)) {
+                //The window has been re-sized
+                newSwapchainRequired=1;
+                width = cfg->width;
+                height = cfg->height;
+                //The aspect ratio may have changed, build a new perspective matrix and write to bound memory:
+                perspective_matrix(0.7853 /* 45deg */, (float)width/(float)height, 0.1f, 100.0f, sceneBufferValsp->projection);
+            }
           break;
-        //default:
-        //   printf ("Unknown XCB Event %d\n", (e->response_type & ~0x80));
       }
       if ((e->response_type & ~0x80)==XCB_CLIENT_MESSAGE)
       {
-	printf("XCB_CLIENT_MESSAGE");
+        printf("XCB_CLIENT_MESSAGE");
         if(((xcb_client_message_event_t*)e)->data.data32[0] == delete_window_reply->atom)
           done=1;  
       }
       free(e);
     }
     if (done)
-      printf("done\n");
-    
-    //printf ("Starting frame %d.\n", frame);
-    
-    uint32_t currentBuffer;
+		  break;
 
-    // Get next image in the swap chain (back/front buffer)
-    res = vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, presentCompleteSemaphore, NULL, &currentBuffer);
-    if (res != VK_SUCCESS) {
-      printf ("vkAcquireNextImageKHR returned error.\n");
-      return -1;
+    if (newSwapchainRequired)
+    {
+      newSwapchainRequired=0;
+      //Delete the existing framebuffers:
+      for (i = 0; i < swapchainImageCount; i++)
+        vkDestroyFramebuffer(device, framebuffers[i], 0);
+      free(framebuffers);
+      //Rebuild the swapchain:
+      if (resizeBuffers(commandBuffers[0], queue, physicalDevices, device, surface, &swapchain, &format, &swapChainImages, &swapChainViews, &swapchainImageCount, depth_format, &depthImage, &depthView, &depthMemory)<0)
+        return -1;
+      //Create new framebuffers:
+   	  if (initFrameBuffers(device, renderPass, swapchainImageCount, swapChainViews, depthView, &framebuffers)<0)
+        return -1;
+      //We must acquire an image from the new swapchain 
+      vkDestroySemaphore(device, presentCompleteSemaphore, NULL);
+      res = vkCreateSemaphore(device, &presentCompleteSemaphoreCreateInfo, NULL,
+              &presentCompleteSemaphore);
+      if (res != VK_SUCCESS) {
+        printf ("vkCreateSemaphore returned error %d.\n", res);
+        return -1;
+      }
+      res = vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, presentCompleteSemaphore, NULL, &currentBuffer);
+      if (res != VK_SUCCESS) {
+        printf ("vkAcquireNextImageKHR returned error.\n");
+        return -1;
+      } 
     } 
-    
-    //printf ("Buffer %d acquired.\n", currentBuffer);
-       
+          
     VkRenderPassBeginInfo renderPassBeginInfo;
     renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassBeginInfo.pNext = NULL;
@@ -1539,9 +1629,6 @@ int main(int argc, char* argv[])
     
     vkCmdBeginRenderPass(commandBuffers[1], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
     vkCmdBindPipeline(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-    vkCmdBindDescriptorSets(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS,
-			      pipelineLayout, 0, 1,
-			      descriptorSets, 0, NULL);
     
     VkViewport viewport;
     viewport.height = (float)height;
@@ -1562,6 +1649,13 @@ int main(int argc, char* argv[])
     
     VkDeviceSize offsets[1] = {0};
     vkCmdBindVertexBuffers(commandBuffers[1], 0, 1, &vertexBuffer, offsets);
+    vkCmdBindDescriptorSets(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS,
+                  pipelineLayout, 0, 1,
+                  descriptorSets, 0, NULL);
+    vkCmdDraw(commandBuffers[1], 12 * 3, 1, 0, 0);
+    vkCmdBindDescriptorSets(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS,
+                  pipelineLayout, 0, 1,
+                  descriptorSets, 0, NULL);
     vkCmdDraw(commandBuffers[1], 12 * 3, 1, 0, 0);
     
     vkCmdEndRenderPass(commandBuffers[1]);
@@ -1619,28 +1713,27 @@ int main(int argc, char* argv[])
       return -1;
     }  
     
-/*
-    //This waits for the queue to finish (this also involves waiting for vsync as the first buffer in this queue will wait on on the presntcomplete semaphore to be singled by vkAcquireNextImageKHR before starting).
+    //This waits for the queue to finish (this also involves waiting for vsync as the first buffer in this queue will wait on the presntcomplete semaphore to be singled by vkAcquireNextImageKHR before starting).
     int timeoutCount = 0;
     do {      
 	res = vkWaitForFences(device, 1, &drawFence, VK_TRUE, 100000000);
 	timeoutCount++;
     } while (res == VK_TIMEOUT && timeoutCount < 10);
-    
+    //usleep(16000);
     vkDestroyFence(device, drawFence, NULL);
-    */
+    /*
     //Simpler approach to using a fence is to use vkQueueWaitIdle (does not work correctly on Nvidia).
     res = vkQueueWaitIdle(queue);
     if (res != VK_SUCCESS) {
       printf ("vkQueueSubmit returned error %d.\n", res);
       return -1;
     }
-    
+    */
+
     //The queue is idle, now is a good time to update the bound memory.
-    rotate_matrix(frame, 0,1,0, modelMatrix);
-    multiply_matrix(viewMatrix, modelMatrix, MVMatrix);
+    rotate_matrix(45+frame, 0,1,0, modelMatrix);
     //As the memory is still mapped we can write the result stright into uniformMappedMemory:
-    multiply_matrix(projectionMatrix, MVMatrix, (float*)uniformMappedMemory);
+    multiply_matrix(viewMatrix, modelMatrix, modelBufferVals1->mv);
     
     //printf ("Command buffer finished %d.\n", res);
     
@@ -1659,6 +1752,7 @@ int main(int argc, char* argv[])
       return -1;
     }   
     
+  //return 0;
     //printf ("Finished frame %d.\n", frame);
     frame++;
   }
