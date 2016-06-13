@@ -1851,14 +1851,6 @@ int main(int argc, char* argv[])
   while (1==1) {
     //printf ("Starting frame %d.\n", frame);
 
-    //This semaphore will be signalled after the next image is acquired. The first command buffer will wait until this happens before starting the render pass.
-    vkDestroySemaphore(device, presentCompleteSemaphore, NULL);
-    res = vkCreateSemaphore(device, &presentCompleteSemaphoreCreateInfo, NULL,
-                  &presentCompleteSemaphore);
-    if (res != VK_SUCCESS) {
-      printf ("vkCreateSemaphore returned error %d.\n", res);
-      return -1;
-    }
     //Acquire the next image in the swapchain
     res = vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, presentCompleteSemaphore, NULL, &currentBuffer);
     if (!(res == VK_SUCCESS || res == VK_ERROR_OUT_OF_DATE_KHR)) {
